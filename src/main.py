@@ -1,7 +1,20 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI()
+app = FastAPI(
+    title="쿠책책 API 서버",
+    description="쿠책책 API 서버입니다.",
+    version="0.1.0",
+    contact={
+        "name": "Minjae",
+        "url": "https://github.com/mjkweon17",
+        "email": "mjkweon17@korea.ac.kr"
+    },
+    license_info={
+        "name": "MIT",
+        "url": "https://opensource.org/licenses/MIT"
+    }
+)
 
 # CORS
 origins = [
