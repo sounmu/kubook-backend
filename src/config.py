@@ -1,5 +1,5 @@
 import os
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 from dotenv import load_dotenv
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     # Container Registry 설정
     CONTAINER_USERNAME: str = os.getenv("CONTAINER_USERNAME", "username")
     CONTAINER_PASSWORD: str = os.getenv("CONTAINER_PASSWORD", "password")
-    CONTAINER_REGISTRY: str = os.getenv("CONTAINER_REGISTRY", )
+    CONTAINER_REGISTRY: str = os.getenv("CONTAINER_REGISTRY", "docker.io")
     CONTAINER_IMAGE: str = os.getenv("CONTAINER_IMAGE", "kubbok")
     CONTAINER_TAG: str = os.getenv("CONTAINER_TAG", "latest")
 
@@ -40,3 +40,6 @@ class Settings(BaseSettings):
     APP_TITLE: str = "Library Management System"
     APP_DESCRIPTION: str = "API for managing library resources"
     APP_VERSION: str = "0.1.0"
+
+    # Firebase 설정
+    FIREBASE_SERVICE_ACCOUNT_KEY: str = os.getenv("FIREBASE_SERVICE_ACCOUNT_KEY", "firebase-service-account-key.json")

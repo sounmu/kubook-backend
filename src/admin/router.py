@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from ..dependencies import get_db, get_current_admin_user
+from dependencies import get_db, get_current_admin_user
 
 router = APIRouter(
     prefix="/admin",

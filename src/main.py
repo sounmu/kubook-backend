@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from auth.router import router as auth_router
+
 app = FastAPI(
     title="쿠책책 API 서버",
     description="쿠책책 API 서버입니다.",
@@ -26,10 +28,13 @@ origins = [
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_crendentials=True,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
 )
+
+app.include_router(auth_router)
+
 
 @app.get("/")
 async def root():
