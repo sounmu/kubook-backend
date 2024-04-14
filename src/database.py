@@ -27,10 +27,10 @@ class EngineConnection:
         return self.engine.connect()
 
 
-def get_db():
+def get_db_session():
     engine_conn = EngineConnection()
+    session = engine_conn.get_session()
     try:
-        session = engine_conn.get_session()
         yield session
     finally:
         session.close()
