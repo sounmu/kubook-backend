@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Text, DateTime, Date, Numeric, Year
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Text, DateTime, Date, Numeric
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from sqlalchemy.ext.declarative import declarative_base
@@ -33,7 +33,7 @@ class RequestedBook(Base):
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
     book_title = Column(String(255), nullable=False)
     author = Column(String(255))
-    publication_year = Column(Year)
+    publication_year = Column(Integer)
     publisher = Column(String(255))
     request_link = Column(String(100), nullable=False)
     reason = Column(Text, nullable=False)
@@ -117,7 +117,7 @@ class BookInfo(Base):
     subtitle = Column(String(255))
     author = Column(String(100), nullable=False)
     publisher = Column(String(45), nullable=False)
-    publication_year = Column(Year, nullable=False)
+    publication_year = Column(Integer, nullable=False)
     image_url = Column(String(255))
     category_id = Column(Integer, ForeignKey("book_category.id"), nullable=False)
     copied = Column(String(100))
