@@ -3,7 +3,7 @@ import paramiko
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-
+from contextlib import contextmanager
 from config import Settings
 
 settings = Settings()
@@ -29,21 +29,21 @@ print(f"Connecting to SSH host: {ssh_host}:{ssh_port} with username: {ssh_userna
 ssh_client = paramiko.SSHClient()
 ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-local_port = 3307  # Local port to forward to remote MySQL server
 ssh_tunnel = None
 
 try:
     ssh_client.connect(hostname=ssh_host, port=ssh_port, username=ssh_username, key_filename=ssh_key_filename,
                        timeout=30)
     print("SSH connection successful.")
-    # remote_bind_address = (db_host, db_port)
-    # local_bind_address = ('localhost', local_port)
-    #
-    # try:
-    #     ssh_tunnel = ssh_client.get_transport().open_channel('direct-tcpip', remote_bind_address, local_bind_address)
-    #     print("SSH tunnel successfully established.")
-    # except Exception as e:
-    #     print(f"Error creating SSH tunnel: {e}")
+
+    remote_bind_address = (ssh_host, ssh_port)
+    db_bind_address = (db_host, db_port)
+    
+    try:
+        ssh_tunnel = ssh_client.get_transport().open_channel('direct-tcpip', remote_bind_address, db_bind_address)
+        print("SSH tunnel successfully established.")
+    except Exception as e:
+        print(f"Error creating SSH tunnel: {e}")
 
 except Exception as e:
     print(f"Error connecting to SSH: {e}")
@@ -55,7 +55,7 @@ Base = declarative_base()
 
 class EngineConnection:
     def __init__(self):
-        self.engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_recycle=500)
+        self.engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_recycle=500, connect_args={"connect_timeout": 100})
 
     def get_session(self):
         session_local = sessionmaker(autoflush=False, autocommit=False, bind=self.engine)
@@ -73,10 +73,10 @@ def get_db_session():
     finally:
         session.close()
 
+
 # Close the SSH tunnel and client
 if ssh_tunnel:
     ssh_tunnel.close()
 if ssh_client:
     ssh_client.close()
 
-get_db_session()

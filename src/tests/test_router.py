@@ -4,13 +4,13 @@ from pydantic import BaseModel
 
 from dependencies import get_db
 
+from models import ServiceSetting
+# class ServiceSetting(BaseModel):
+#     service_begin: str
+#     service_end: str
 
-class ServiceSetting(BaseModel):
-    service_begin: str
-    service_end: str
-
-    class Config:
-        orm_mode = True
+#     class Config:
+#         orm_mode = True
 
 
 router = APIRouter(
