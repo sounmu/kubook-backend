@@ -1,9 +1,8 @@
-import os
 import paramiko
-from sqlalchemy import create_engine
+import os
+from sqlalchemy import create_engine, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from contextlib import contextmanager
 from config import Settings
 
 settings = Settings()
@@ -36,20 +35,21 @@ try:
                        timeout=30)
     print("SSH connection successful.")
 
-    remote_bind_address = (ssh_host, ssh_port)
-    db_bind_address = (db_host, db_port)
+    remote_bind_address = (db_host, db_port)
+    local_bind_address = ('localhost', 3307)
     
     try:
-        ssh_tunnel = ssh_client.get_transport().open_channel('direct-tcpip', remote_bind_address, db_bind_address)
+        ssh_tunnel = ssh_client.get_transport().open_channel('direct-tcpip', remote_bind_address, local_bind_address )
         print("SSH tunnel successfully established.")
     except Exception as e:
         print(f"Error creating SSH tunnel: {e}")
+        exit(1)
 
 except Exception as e:
     print(f"Error connecting to SSH: {e}")
-    exit(1)  # Exit the program if SSH connection fails
+    exit(1)
 
-SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{db_user}:{db_password}@localhost:3307/{db_name}"
 
 Base = declarative_base()
 
@@ -67,11 +67,16 @@ class EngineConnection:
 def get_db_session():
     engine_conn = EngineConnection()
     session = engine_conn.get_session()
-    try:
-        yield session
-        print('get db session')
-    finally:
-        session.close()
+    return session
+
+# Fetch data from the server database
+with get_db_session() as session:
+    print("Server Data:")
+    server_data = session.execute(text("select * from service_setting;")).fetchall()
+    if server_data :
+        for row in server_data:
+            print(row)
+    else : print('No data')
 
 
 # Close the SSH tunnel and client
@@ -79,4 +84,3 @@ if ssh_tunnel:
     ssh_tunnel.close()
 if ssh_client:
     ssh_client.close()
-
