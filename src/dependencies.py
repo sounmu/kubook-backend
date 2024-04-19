@@ -4,9 +4,8 @@ from sqlalchemy.orm import Session
 from database import get_db_session
 from models import User
 
-
 def get_db():
-    db = next(get_db_session())
+    db = get_db_session()
     try:
         yield db
     finally:
