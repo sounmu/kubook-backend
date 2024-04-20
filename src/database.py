@@ -2,7 +2,6 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from config import Settings
-from ssh import SSHConnection
 
 settings = Settings()
 
@@ -36,15 +35,3 @@ def get_db_session():
     engine_conn = EngineConnection()
     session = engine_conn.get_session()
     return session
-
-# Test to fetch data from the server database
-ssh_connection = SSHConnection()
-ssh_connection.connect() 
-
-with get_db_session() as session:
-    print("Server Data:")
-    server_data = session.execute(text("select * from service_setting;")).fetchall()
-    if server_data :
-        for row in server_data:
-            print(row)
-    else : print('No data')
