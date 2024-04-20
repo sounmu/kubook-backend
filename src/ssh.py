@@ -52,6 +52,11 @@ class SSHConnection:
             self.ssh_client.start()
 
     def close(self):
-        # Close the SSH tunnel and client
+        print(f'Closing SSH connection : {self.ssh_host}:{self.ssh_port} with username: {self.ssh_username}')
         if self.ssh_client:
             self.ssh_client.stop()
+
+def get_ssh_connection():
+    ssh_connection = SSHConnection()
+    ssh_connection.connect()
+    return ssh_connection
