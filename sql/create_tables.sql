@@ -16,9 +16,8 @@ CREATE TABLE `requested_book` (
 	`id`	INT	NOT NULL    AUTO_INCREMENT,
 	`user_id`	INT	NOT NULL,
 	`book_title`	VARCHAR(255)	NOT NULL,
-	`author`	VARCHAR(255)	NULL,
 	`publication_year`	YEAR	NULL,
-	`publisher`	VARCHAR(255)	NULL,
+	`reject_reason`	TEXT	NULL,
 	`request_link`	VARCHAR(100)	NOT NULL,
 	`reason`	TEXT	NOT NULL,
 	`processing_status`	TINYINT	NOT NULL	DEFAULT 0,
@@ -54,24 +53,6 @@ CREATE TABLE `notice` (
     FOREIGN KEY (`admin_id`) REFERENCES `admin`(`id`)
 );
 
-CREATE TABLE `notification_category` (
-	`id`	INT	NOT NULL    AUTO_INCREMENT,
-	`name`	VARCHAR(100)	NOT NULL,
-    PRIMARY KEY (`id`)
-);
-
-CREATE TABLE `notification` (
-	`id`	INT	NOT NULL    AUTO_INCREMENT,
-	`user_id`	INT	NOT NULL,
-	`notification_category_id`	INT	NOT NULL,
-	`content`	TEXT	NOT NULL,
-    `created_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
-    `is_valid`	BOOLEAN	NOT NULL	DEFAULT FALSE,
-    PRIMARY KEY (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES `user`(`id`),
-    FOREIGN KEY (`notification_category_id`) REFERENCES `notification_category`(`id`)
-);
-
 CREATE TABLE `book_category` (
 	`id`	INT	NOT NULL    AUTO_INCREMENT,
 	`code`	VARCHAR(5)	NOT NULL,
@@ -103,7 +84,6 @@ CREATE TABLE `book_info` (
 CREATE TABLE `book_stat` (
 	`id`	INT	NOT NULL    AUTO_INCREMENT,
 	`book_info_id`	INT	NOT NULL,
-	`average_rating`	DECIMAL(3,2)    NULL	DEFAULT NULL,
 	`review_count`	INT	NOT NULL	DEFAULT 0,
 	`loan_count`	INT	NOT NULL	DEFAULT 0,
     PRIMARY KEY (`id`),
@@ -115,7 +95,6 @@ CREATE TABLE `book_review` (
 	`user_id`	INT	NOT NULL,
 	`book_info_id`	INT	NOT NULL,
 	`review_content`    TEXT	NOT NULL,
-	`rating`	INT	NOT NULL,
 	`is_valid`	BOOLEAN	NOT NULL	DEFAULT FALSE,
 	`created_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 	`updated_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
