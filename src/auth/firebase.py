@@ -29,15 +29,4 @@ async def sign_in_with_email_and_password(email: str, password: str, return_secu
 
     response = r.json()
 
-    try:
-        localId = response["localId"]
-        return localId
-    except KeyError:
-        error = response["error"]["message"]
-        """
-        발생할 수 있는 에러
-        - EMAIL_NOT_FOUND: 사용자의 이메일이 존재하지 않음
-        - INVALID_PASSWORD: 비밀번호가 틀림
-        - USER_DISABLED: 사용자 계정이 비활성화됨
-        """
-        return error
+    return response
