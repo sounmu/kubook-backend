@@ -158,7 +158,7 @@ class Reservation(Base):
     id = Column(Integer, primary_key=True, index=True)
     book_id = Column(Integer, ForeignKey("book.id"), nullable=False)
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
-    reservation_date = Column(DateTime, nullable=False, default=func.current_timestamp())
+    reservation_date = Column(Date, nullable=False)
     reservation_status = Column(Integer, nullable=0)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
