@@ -1,30 +1,77 @@
-from sqlalchemy.orm import create_session
-
-from auth.firebase_auth import auth as firebase_auth
+from datetime import timedelta
 
 
-async def get_all_users():
-    """
-    Firebase에 등록된 모든 사용자 정보 가져오기
-    """
+from sqlalchemy.orm import Session
+from fastapi import HTTPException, status
+
+from config import Settings
+from models import User
+from auth.firebase import sign_in_with_email_and_password
+from auth.token_service import create_jwt
+
+
+async def login(request, db: Session):
+    # Authenticate user
+    # Check if user exists in Firebase
+    firebase_response = await sign_in_with_email_and_password(request.email, request.password)
     try:
-        # 페이지네이션 처리를 위한 변수 초기화
-        page_token = None
-        all_users = []
+        localId = firebase_response["localId"]
+        return localId
+    except KeyError:
+        error_message = firebase_response["error"]["message"]
+        if error_message == "INVALID_EMAIL":
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+        elif error_message == "INVALID_PASSWORD":
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid password")
+        elif error_message == "USER_DISABLED":
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User disabled")
 
-        while True:
-            # 사용자 목록 가져오기
-            result = firebase_auth.list_users(page_token=page_token)
+    # Check if user information exists in the DB
+    local_id = firebase_response
+    user = db.query(User).filter(User.auth_id == local_id).first()
 
-            # 가져온 사용자 정보를 리스트에 추가
-            all_users.extend(result.users)
+    # If user information does not exist in the DB, create a new user
+    if user is None:
+        user = User(
+            auth_id=local_id,
+            user_name="권민재",
+            email=request.email
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
 
-            # 다음 페이지 토큰이 있으면 계속 가져오기
-            page_token = result.next_page_token
-            if not page_token:
-                break
 
-        return all_users
-    except Exception as e:
-        print(f"Error getting all users: {e}")
-        return []
+# TODO: create jwt token을 token_service.py에 옮기고, 간략화할 것
+# TODO: 회원가입 API 작성하기
+
+    # Create JWT token
+    # Create Access Token
+    access_token_expires = timedelta(minutes=Settings().JWT_ACCESS_EXPIRATION_TIME_MINUTES)
+    access_token = create_jwt(
+        data={"sub": user.id},
+        secret_key=Settings().JWT_SECRET_KEY,
+        algorithm=Settings().JWT_ALGORITHM,
+        expires_delta=access_token_expires
+    )
+
+    # Create Refresh Token
+    refresh_token_expires = timedelta(minutes=Settings().JWT_REFRESH_EXPIRATION_TIME_MINUTES)
+    refresh_token = create_jwt(
+        data={"sub": user.id},
+        secret_key=Settings().JWT_SECRET_KEY,
+        algorithm=Settings().JWT_ALGORITHM,
+        expires_delta=refresh_token_expires
+    )
+
+    return {
+        "token": {
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+            "token_type": "bearer"
+        },
+        "user": {
+            "id": user.id,
+            "user_name": user.user_name
+        }
+    }

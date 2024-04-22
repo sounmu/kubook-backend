@@ -34,7 +34,8 @@ class Settings(BaseSettings):
     # JWT 토큰 설정
     JWT_SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", "your-secret-key")
     JWT_ALGORITHM: str = os.getenv("JWT_ALGORITHM", "HS256")
-    JWT_EXPIRATION_TIME_MINUTES: int = int(os.getenv("JWT_EXPIRATION_TIME_MINUTES", 30))
+    JWT_ACCESS_EXPIRATION_TIME_MINUTES: int = int(os.getenv("JWT_ACCESS_EXPIRATION_TIME_MINUTES", 30))
+    JWT_REFRESH_EXPIRATION_TIME_MINUTES: int = int(os.getenv("JWT_REFRESH_EXPIRATION_TIME_MINUTES", 60))
 
     # 애플리케이션 설정
     APP_TITLE: str = "Library Management System"
@@ -43,3 +44,4 @@ class Settings(BaseSettings):
 
     # Firebase 설정
     FIREBASE_SERVICE_ACCOUNT_KEY: str = os.getenv("FIREBASE_SERVICE_ACCOUNT_KEY", "firebase-service-account-key.json")
+    FIREBASE_WEB_API_KEY: str = os.getenv("FIREBASE_WEB_API_KEY", "firebase-web-api-key")
