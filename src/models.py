@@ -16,7 +16,7 @@ class User(Base):
     email = Column(String(100), unique=True, nullable=False)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
-    is_valid = Column(Boolean, nullable=False, default=False)
+    is_valid = Column(Boolean, nullable=False, default=True)
 
     requested_books = relationship("RequestedBook", back_populates="user")
     admin = relationship("Admin", back_populates="user")
@@ -39,7 +39,7 @@ class RequestedBook(Base):
     request_date = Column(Date, nullable=False)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
-    is_valid = Column(Boolean, nullable=False, default=False)
+    is_valid = Column(Boolean, nullable=False, default=True)
 
     user = relationship("User", back_populates="requested_books")
 
@@ -68,7 +68,7 @@ class Notice(Base):
     notice_content = Column(Text, nullable=False)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
-    is_valid = Column(Boolean, nullable=False, default=False)
+    is_valid = Column(Boolean, nullable=False, default=True)
 
     admin = relationship("Admin", back_populates="notices")
 
@@ -79,7 +79,7 @@ class BookCategory(Base):
     id = Column(Integer, primary_key=True, index=True)
     code = Column(String(5), nullable=False)
     name = Column(String(50), nullable=False)
-    is_valid = Column(Boolean, nullable=False, default=False)
+    is_valid = Column(Boolean, nullable=False, default=True)
 
     books = relationship("BookInfo", back_populates="category")
 
@@ -99,7 +99,7 @@ class BookInfo(Base):
     version = Column(String(45))
     major = Column(Boolean, default=False)
     language = Column(String(10), nullable=False, default="한국어")
-    is_valid = Column(Boolean, nullable=False, default=False)
+    is_valid = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
 
@@ -127,7 +127,7 @@ class BookReview(Base):
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
     book_info_id = Column(Integer, ForeignKey("book_info.id"), nullable=False)
     review_content = Column(Text, nullable=False)
-    is_valid = Column(Boolean, nullable=False, default=False)
+    is_valid = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
 
@@ -162,6 +162,7 @@ class Reservation(Base):
     reservation_status = Column(Integer, nullable=False)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
+    is_valid = Column(Boolean, nullable=False, default=True)
 
     book = relationship("Book", back_populates="reservations")
     user = relationship("User", back_populates="reservations")
@@ -180,6 +181,7 @@ class Loan(Base):
     return_date = Column(Date)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
+    is_valid = Column(Boolean, nullable=False, default=True)
 
     book = relationship("Book", back_populates="loans")
     user = relationship("User", back_populates="loans")
