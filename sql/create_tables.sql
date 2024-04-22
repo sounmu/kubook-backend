@@ -73,7 +73,7 @@ CREATE TABLE `book_info` (
 	`copied`	VARCHAR(100)	NULL,
 	`version`	VARCHAR(45)	NULL,
 	`major`	BOOLEAN	NULL	DEFAULT FALSE,
-	`language`	VARCHAR(10)	NOT NULL	DEFAULT "한국어",
+	`language`	VARCHAR(10)	NOT NULL	DEFAULT '한국어',
 	`created_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 	`updated_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	`is_valid`	BOOLEAN	NOT NULL	DEFAULT TRUE,
@@ -120,11 +120,11 @@ CREATE TABLE `reservation` (
 	`id`	INT	NOT NULL	AUTO_INCREMENT,
 	`book_id`	INT	NOT NULL,
 	`user_id`	INT	NOT NULL,
-	`reservation_date`	DATE	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
+	`reservation_date`	DATE	NOT NULL,
 	`reservation_status`	TINYINT	NOT NULL	DEFAULT 0,
 	`created_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 	`updated_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	`is_valid` = Column(Boolean, nullable=False, default=True)
+	`is_valid`	BOOLEAN	NOT NULL	DEFAULT TRUE,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`book_id`) REFERENCES `book`(`id`),
     FOREIGN KEY (`user_id`) REFERENCES `user`(`id`)
