@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     SSH_HOST: str = os.getenv("SSH_HOST", "localhost")
     SSH_PORT: int = int(os.getenv("SSH_PORT", 22))
     SSH_USERNAME: str = os.getenv("SSH_USERNAME", "username")
-    SSH_PASSWORD: str = os.getenv("SSH_PASSWORD", "password")
+    SSH_KEYFILE: str = os.getenv("SSH_KEYFILE", "kucc-lib-key1.pem")
 
     # 데이터베이스 설정
     DB_HOST: str = os.getenv("DB_HOST", "localhost")
