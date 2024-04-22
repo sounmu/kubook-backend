@@ -1,23 +1,24 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-
 from config import Settings
 
 settings = Settings()
-db_host = settings.DB_HOST
-db_port = settings.DB_PORT
+
 db_name = settings.DB_NAME
 db_user = settings.DB_USER
 db_password = settings.DB_PASSWORD
 
-SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+local_host = 'localhost'
+local_port = 3307 
+
 Base = declarative_base()
 
+SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{db_user}:{db_password}@{local_host}:{local_port}/{db_name}"
 
 class EngineConnection:
     def __init__(self):
-        self.engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_recycle=500)
+        self.engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_recycle=500, connect_args={"connect_timeout": 100})
 
     def get_session(self):
         session_local = sessionmaker(autoflush=False, autocommit=False, bind=self.engine)
@@ -25,12 +26,12 @@ class EngineConnection:
 
     def get_connection(self):
         return self.engine.connect()
-
+    
+    def close_engine(self):
+        return self.engine.dispose()
+    
 
 def get_db_session():
     engine_conn = EngineConnection()
     session = engine_conn.get_session()
-    try:
-        yield session
-    finally:
-        session.close()
+    return session

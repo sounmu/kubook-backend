@@ -6,7 +6,7 @@ CREATE TABLE `user` (
 	`email`	VARCHAR(100)	NOT NULL,
 	`created_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 	`updated_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	`is_valid`	BOOLEAN	NOT NULL	DEFAULT FALSE,
+	`is_valid`	BOOLEAN	NOT NULL	DEFAULT TRUE,
     PRIMARY KEY (`id`),
     UNIQUE KEY `auth_id` (`auth_id`),
     UNIQUE KEY `email` (`email`)
@@ -16,12 +16,11 @@ CREATE TABLE `requested_book` (
 	`id`	INT	NOT NULL    AUTO_INCREMENT,
 	`user_id`	INT	NOT NULL,
 	`book_title`	VARCHAR(255)	NOT NULL,
-	`author`	VARCHAR(255)	NULL,
 	`publication_year`	YEAR	NULL,
-	`publisher`	VARCHAR(255)	NULL,
+	`reject_reason`	TEXT	NULL,
 	`request_link`	VARCHAR(100)	NOT NULL,
 	`reason`	TEXT	NOT NULL,
-	`processing_status`	TINYINT	NOT NULL	DEFAULT 0,
+	`processing_status`	TINYINT	NOT NULL	DEFAULT FALSE,
 	`request_date`	DATE	NOT NULL,
 	`created_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 	`updated_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -49,34 +48,16 @@ CREATE TABLE `notice` (
 	`notice_content`	TEXT	NOT NULL,
 	`created_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 	`updated_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	`is_valid`	BOOLEAN	NOT NULL	DEFAULT FALSE,
+	`is_valid`	BOOLEAN	NOT NULL	DEFAULT TRUE,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`admin_id`) REFERENCES `admin`(`id`)
-);
-
-CREATE TABLE `notification_category` (
-	`id`	INT	NOT NULL    AUTO_INCREMENT,
-	`name`	VARCHAR(100)	NOT NULL,
-    PRIMARY KEY (`id`)
-);
-
-CREATE TABLE `notification` (
-	`id`	INT	NOT NULL    AUTO_INCREMENT,
-	`user_id`	INT	NOT NULL,
-	`notification_category_id`	INT	NOT NULL,
-	`content`	TEXT	NOT NULL,
-    `created_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
-    `is_valid`	BOOLEAN	NOT NULL	DEFAULT FALSE,
-    PRIMARY KEY (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES `user`(`id`),
-    FOREIGN KEY (`notification_category_id`) REFERENCES `notification_category`(`id`)
 );
 
 CREATE TABLE `book_category` (
 	`id`	INT	NOT NULL    AUTO_INCREMENT,
 	`code`	VARCHAR(5)	NOT NULL,
 	`name`	VARCHAR(50)	NOT NULL,
-	`is_valid`	BOOLEAN	NOT NULL	DEFAULT FALSE,
+	`is_valid`	BOOLEAN	NOT NULL	DEFAULT TRUE,
     PRIMARY KEY (`id`)
 );
 
@@ -93,7 +74,7 @@ CREATE TABLE `book_info` (
 	`version`	VARCHAR(45)	NULL,
 	`major`	BOOLEAN	NULL	DEFAULT FALSE,
 	`language`	VARCHAR(10)	NOT NULL	DEFAULT "한국어",
-	`is_valid`	BOOLEAN	NOT NULL	DEFAULT 0,
+	`is_valid`	BOOLEAN	NOT NULL	DEFAULT TRUE,
 	`created_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 	`updated_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
@@ -103,7 +84,6 @@ CREATE TABLE `book_info` (
 CREATE TABLE `book_stat` (
 	`id`	INT	NOT NULL    AUTO_INCREMENT,
 	`book_info_id`	INT	NOT NULL,
-	`average_rating`	DECIMAL(3,2)    NULL	DEFAULT NULL,
 	`review_count`	INT	NOT NULL	DEFAULT 0,
 	`loan_count`	INT	NOT NULL	DEFAULT 0,
     PRIMARY KEY (`id`),
@@ -115,8 +95,7 @@ CREATE TABLE `book_review` (
 	`user_id`	INT	NOT NULL,
 	`book_info_id`	INT	NOT NULL,
 	`review_content`    TEXT	NOT NULL,
-	`rating`	INT	NOT NULL,
-	`is_valid`	BOOLEAN	NOT NULL	DEFAULT FALSE,
+	`is_valid`	BOOLEAN	NOT NULL	DEFAULT TRUE,
 	`created_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 	`updated_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
@@ -131,7 +110,7 @@ CREATE TABLE `book` (
 	`note`	VARCHAR(255)	NULL	DEFAULT NULL,
 	`created_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 	`updated_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-	`is_valid`	BOOLEAN	NOT NULL	DEFAULT FALSE,
+	`is_valid`	BOOLEAN	NOT NULL	DEFAULT TRUE,
 	`donor_name`	VARCHAR(255)	NULL	DEFAULT NULL,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`book_info_id`) REFERENCES `book_info`(`id`)
@@ -145,6 +124,7 @@ CREATE TABLE `reservation` (
 	`reservation_status`	TINYINT	NOT NULL,
 	`created_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 	`updated_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	is_valid = Column(Boolean, nullable=False, default=True)
     PRIMARY KEY (`id`),
     FOREIGN KEY (`book_id`) REFERENCES `book`(`id`),
     FOREIGN KEY (`user_id`) REFERENCES `user`(`id`)
@@ -161,6 +141,7 @@ CREATE TABLE `loan` (
 	`return_date`	DATE    NULL,
 	`created_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 	`updated_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`is_valid`	BOOLEAN	NOT NULL	DEFAULT TRUE,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`book_id`) REFERENCES `book`(`id`),
     FOREIGN KEY (`user_id`) REFERENCES `user`(`id`)
