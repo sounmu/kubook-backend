@@ -99,9 +99,9 @@ class BookInfo(Base):
     version = Column(String(45))
     major = Column(Boolean, default=False)
     language = Column(String(10), nullable=False, default="한국어")
-    is_valid = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
+    is_valid = Column(Boolean, nullable=False, default=True)
 
     category = relationship("BookCategory", back_populates="books")
     book_stat = relationship("BookStat", back_populates="book_info")
@@ -127,9 +127,9 @@ class BookReview(Base):
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
     book_info_id = Column(Integer, ForeignKey("book_info.id"), nullable=False)
     review_content = Column(Text, nullable=False)
-    is_valid = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
+    is_valid = Column(Boolean, nullable=False, default=True)
 
     user = relationship("User", back_populates="book_reviews")
     book_info = relationship("BookInfo", back_populates="book_reviews")
@@ -142,10 +142,10 @@ class Book(Base):
     book_info_id = Column(Integer, ForeignKey("book_info.id"), nullable=False)
     book_status = Column(Boolean, nullable=False, default=True)
     note = Column(String(255), default=None)
+    donor_name = Column(String(255), default=None)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
     is_valid = Column(Boolean, nullable=False, default=False)
-    donor_name = Column(String(255), default=None)
 
     book_info = relationship("BookInfo", back_populates="books")
     reservations = relationship("Reservation", back_populates="book")
@@ -159,7 +159,7 @@ class Reservation(Base):
     book_id = Column(Integer, ForeignKey("book.id"), nullable=False)
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
     reservation_date = Column(DateTime, nullable=False, default=func.current_timestamp())
-    reservation_status = Column(Integer, nullable=False)
+    reservation_status = Column(Integer, nullable=0)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
     is_valid = Column(Boolean, nullable=False, default=True)
@@ -210,3 +210,11 @@ class RequestSetting(Base):
     id = Column(Integer, primary_key=True, index=True)
     max_request_count = Column(Integer, nullable=False)
     max_request_price = Column(Integer, nullable=False)
+
+
+class ReservationSetting(Base):
+    __tablename__ = "reservation_setting"
+
+    id = Column(Integer, primary_key=True, index=True)
+    max_books_per_user = Column(Integer, nullable=False)
+    max_users_per_book = Column(Integer, nullable=False)
