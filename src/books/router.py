@@ -1,7 +1,10 @@
+from typing import List
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from dependencies import get_db
+from dependencies import get_db, get_current_active_user
+from books.schemas import BookCreate, BookSearchResult
 
 router = APIRouter(
     prefix="/books",
@@ -11,7 +14,17 @@ router = APIRouter(
 
 @router.get(
     "/search",
+    response_model=List[BookSearchResult],
     summary="도서 검색",
+    description="""
+    - 도서 제목, 저자, ISBN으로 검색
+    - 검색 결과는 도서 제목, 저자, ISBN만 표시
+    - 검색 결과가 없을 경우 빈 배열 반환
+    """,
+    response_description={
+        200: {"description": "Search successful"},
+        404: {"description": "No books found"}
+    }
 )
 async def search_books(db: Session = Depends(get_db)):
     pass
