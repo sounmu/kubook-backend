@@ -4,12 +4,13 @@ from sqlalchemy.orm import Session
 from database import get_db_session
 from models import User
 
+
 def get_db():
-    db = get_db_session()
     try:
-        yield db
+        session = get_db_session()
+        yield session
     finally:
-        db.close()
+        session.close()
 
 
 async def get_current_user():

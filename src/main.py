@@ -2,18 +2,26 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 
+from ssh import get_ssh_connection
+from config import Settings
+
 from auth.router import router as auth_router
 from tests.test_router import router as test_router
-from ssh import get_ssh_connection
 
-## lifespan handler
+settings = Settings()
+
+
 @asynccontextmanager
-async def lifespan(app:FastAPI):
-    # Open SSH Connection
-    ssh_connection = get_ssh_connection()
-    yield
-    # Close SSH Connection
-    ssh_connection.close()
+async def lifespan(app: FastAPI):
+    if settings.ENVIRONMENT == "development":
+        # Open SSH Connection
+        ssh_connection = get_ssh_connection()
+        yield
+        # Close SSH Connection
+        ssh_connection.close()
+    else:
+        yield
+
 
 app = FastAPI(
     title="쿠책책 API 서버",
