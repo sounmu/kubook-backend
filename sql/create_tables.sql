@@ -33,6 +33,7 @@ CREATE TABLE `admin` (
 	`id`	INT	NOT NULL	AUTO_INCREMENT,
 	`user_id`	INT	NOT NULL,
 	`admin_status`	BOOLEAN	NOT NULL	DEFAULT FALSE,
+	`expiration_date`	DATE	NULL,
 	`created_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 	`updated_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `is_valid`	BOOLEAN	NOT NULL	DEFAULT FALSE,
@@ -57,6 +58,8 @@ CREATE TABLE `book_category` (
 	`id`	INT	NOT NULL	AUTO_INCREMENT,
 	`code`	VARCHAR(5)	NOT NULL,
 	`name`	VARCHAR(50)	NOT NULL,
+	`created_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
+	`updated_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	`is_valid`	BOOLEAN	NOT NULL	DEFAULT TRUE,
     PRIMARY KEY (`id`)
 );
@@ -70,7 +73,6 @@ CREATE TABLE `book_info` (
 	`publication_year`	YEAR	NOT NULL,
 	`image_url`	VARCHAR(255)	NULL,
 	`category_id`	INT	NOT NULL,
-	`copied`	VARCHAR(100)	NULL,
 	`version`	VARCHAR(45)	NULL,
 	`major`	BOOLEAN	NULL	DEFAULT FALSE,
 	`language`	VARCHAR(10)	NOT NULL	DEFAULT '한국어',
@@ -135,10 +137,11 @@ CREATE TABLE `loan` (
 	`book_id`	INT	NOT NULL,
 	`user_id`	INT	NOT NULL,
 	`loan_date`	DATE	NOT NULL,
+	`due_date`	DATE	NOT NULL,
 	`extend_status`	BOOLEAN	NOT NULL	DEFAULT FALSE,
-	`expected_return_date`	DATE	NOT NULL,
 	`return_status`	BOOLEAN	NOT NULL	DEFAULT FALSE,
 	`return_date`	DATE    NULL,
+	`overdue_days`	INT	NOT NULL	DEFAULT 0,
 	`created_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 	`updated_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	`is_valid`	BOOLEAN	NOT NULL	DEFAULT TRUE,
@@ -147,31 +150,38 @@ CREATE TABLE `loan` (
     FOREIGN KEY (`user_id`) REFERENCES `user`(`id`)
 );
 
-CREATE TABLE `service_setting` (
+CREATE TABLE `library_setting` (
 	`id`	INT	NOT NULL	AUTO_INCREMENT,
-	`service_begin`	DATETIME	NOT NULL,
-	`service_end`	DATETIME	NOT NULL,
+	`name`	VARCHAR(50)	NOT NULL,
+	`value`	VARCHAR(50)	NOT NULL,
+	`data_type`	VARCHAR(50)	NOT NULL,
+	`description`	TEXT	NULL,
+	`created_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
+	`updated_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	`is_valid`	BOOLEAN	NOT NULL	DEFAULT TRUE,
     PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `loan_setting` (
-	`id`	INT	NOT NULL	AUTO_INCREMENT,
-	`max_loan_count`	INT	NOT NULL,
-	`loan_period`	INT	NOT NULL,
-	`extend_period`	INT	NOT NULL,
-    PRIMARY KEY (`id`)
-);
+INSERT INTO `library_setting` (`name`, `value`, `data_type`, `description`, `is_valid`)
+VALUES
+  -- Development Setting 관련
+  ('backend_development_start_date', '2024-04-07', 'DATETIME', '도서관 서비스 백엔드 개발 시작일', 1),
+  ('backend devlopers', '권민재, 한수빈', 'TEXT', '개발자 목록', 1),
+  ('backend_development_end_date', '', 'DATETIME', '도서관 서비스 백엔드 개발 종료일', 1),
+  
+  -- Service Setting 관련
+  ('service_start_date', '2023-06-01', 'DATETIME', '도서관 서비스 시작일', 1),
+  ('service_termination_date', '', 'DATETIME', '도서관 서비스 종료일', 0),
 
-CREATE TABLE `request_setting` (
-	`id`	INT	NOT NULL	AUTO_INCREMENT,
-	`max_request_count` INT	NOT NULL,
-	`max_request_price`	INT	NOT NULL,
-    PRIMARY KEY (`id`)
-);
+  -- Loan Setting 관련
+  ('max_books_per_loan', '5', 'INTEGER', '최대 대출 가능 권수', 1),
+  ('loan_duration_days', '14', 'INTEGER', '대출 기간 (일)', 1),
+  ('loan_extension_days', '7', 'INTEGER', '대출 연장 기간 (일)', 1),
 
-CREATE TABLE `reservation_setting` (
-	`id`	INT	NOT NULL,
-	`max_books_per_user`	INT	NOT NULL,
-	`max_users_per_book`	INT	NOT NULL,
-	PRIMARY KEY (`id`)
-);
+  -- Request Setting 관련
+  ('max_books_per_request', '3', 'INTEGER', '최대 예약 가능 권수', 1),
+  ('max_request_value', '30000', 'INTEGER', '최대 예약 가능 금액', 1),
+
+  -- Reservation Setting 관련
+  ('reservation_limit_per_user', '2', 'INTEGER', '사용자 당 최대 예약 가능 권수', 1),
+  ('reservation_limit_per_book', '3', 'INTEGER', '도서 당 최대 예약 가능 사용자 수', 1);

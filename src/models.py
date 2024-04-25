@@ -50,6 +50,7 @@ class Admin(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
     admin_status = Column(Boolean, nullable=False, default=False)
+    expiration_date = Column(Date, nullable=False)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
     is_valid = Column(Boolean, nullable=False, default=False)
@@ -79,6 +80,8 @@ class BookCategory(Base):
     id = Column(Integer, primary_key=True, index=True)
     code = Column(String(5), nullable=False)
     name = Column(String(50), nullable=False)
+    created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
+    updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
     is_valid = Column(Boolean, nullable=False, default=True)
 
     books = relationship("BookInfo", back_populates="category")
@@ -95,7 +98,6 @@ class BookInfo(Base):
     publication_year = Column(Integer, nullable=False)
     image_url = Column(String(255))
     category_id = Column(Integer, ForeignKey("book_category.id"), nullable=False)
-    copied = Column(String(100))
     version = Column(String(45))
     major = Column(Boolean, default=False)
     language = Column(String(10), nullable=False, default="한국어")
@@ -175,10 +177,11 @@ class Loan(Base):
     book_id = Column(Integer, ForeignKey("book.id"), nullable=False)
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
     loan_date = Column(Date, nullable=False)
+    due_date = Column(Date, nullable=False)
     extend_status = Column(Boolean, nullable=False, default=False)
-    expected_return_date = Column(Date, nullable=False)
     return_status = Column(Boolean, nullable=False, default=False)
     return_date = Column(Date)
+    overdue_days = Column(Integer, nullable=False, default=0)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
     is_valid = Column(Boolean, nullable=False, default=True)
@@ -187,34 +190,13 @@ class Loan(Base):
     user = relationship("User", back_populates="loans")
 
 
-class ServiceSetting(Base):
+class LibrarySetting(Base):
     __tablename__ = "service_setting"
-
     id = Column(Integer, primary_key=True, index=True)
-    service_begin = Column(DateTime, nullable=False)
-    service_end = Column(DateTime, nullable=False)
-
-
-class LoanSetting(Base):
-    __tablename__ = "loan_setting"
-
-    id = Column(Integer, primary_key=True, index=True)
-    max_loan_count = Column(Integer, nullable=False)
-    loan_period = Column(Integer, nullable=False)
-    extend_period = Column(Integer, nullable=False)
-
-
-class RequestSetting(Base):
-    __tablename__ = "request_setting"
-
-    id = Column(Integer, primary_key=True, index=True)
-    max_request_count = Column(Integer, nullable=False)
-    max_request_price = Column(Integer, nullable=False)
-
-
-class ReservationSetting(Base):
-    __tablename__ = "reservation_setting"
-
-    id = Column(Integer, primary_key=True, index=True)
-    max_books_per_user = Column(Integer, nullable=False)
-    max_users_per_book = Column(Integer, nullable=False)
+    name = Column(String(50), nullable=False)
+    value = Column(String(50), nullable=False)
+    data_type = Column(String(50), nullable=False)
+    description = Column(Text, nullable=True)
+    created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
+    updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
+    is_valid = Column(Boolean, nullable=False, default=True)
