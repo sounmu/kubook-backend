@@ -164,9 +164,14 @@ CREATE TABLE `library_setting` (
 
 INSERT INTO `library_setting` (`name`, `value`, `data_type`, `description`, `is_valid`)
 VALUES
+  -- Development Setting 관련
+  ('backend_development_start_date', '2024-04-07', 'DATETIME', '도서관 서비스 백엔드 개발 시작일', 1),
+  ('backend devlopers', '권민재, 한수빈', 'TEXT', '개발자 목록', 1),
+  ('backend_development_end_date', '', 'DATETIME', '도서관 서비스 백엔드 개발 종료일', 1),
+  
   -- Service Setting 관련
-  ('service_start_date', '2023-05-01', 'DATETIME', '도서관 서비스 시작일', 1),
-  ('service_termination_date', '2023-12-31', 'DATETIME', '도서관 서비스 종료일', 1),
+  ('service_start_date', '2023-06-01', 'DATETIME', '도서관 서비스 시작일', 1),
+  ('service_termination_date', '', 'DATETIME', '도서관 서비스 종료일', 0),
 
   -- Loan Setting 관련
   ('max_books_per_loan', '5', 'INTEGER', '최대 대출 가능 권수', 1),
@@ -175,8 +180,8 @@ VALUES
 
   -- Request Setting 관련
   ('max_books_per_request', '3', 'INTEGER', '최대 예약 가능 권수', 1),
-  ('max_request_value', '50000', 'INTEGER', '최대 예약 가능 금액', 1),
+  ('max_request_value', '30000', 'INTEGER', '최대 예약 가능 금액', 1),
 
   -- Reservation Setting 관련
   ('reservation_limit_per_user', '2', 'INTEGER', '사용자 당 최대 예약 가능 권수', 1),
-  ('reservation_limit_per_book', '10', 'INTEGER', '도서 당 최대 예약 가능 사용자 수', 1);
+  ('reservation_limit_per_book', '3', 'INTEGER', '도서 당 최대 예약 가능 사용자 수', 1);
