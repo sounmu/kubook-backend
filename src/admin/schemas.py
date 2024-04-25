@@ -1,0 +1,242 @@
+from typing import List, Optional
+from datetime import datetime as _datetime
+from pydantic import BaseModel as _BaseModel, Field, create_model
+
+class BaseModel(_BaseModel):
+    """
+        기존 BaseModel에 custom classmethod 추가
+        all_optional : 모든 속성 타입을 Optional로 변환
+        omit_fields : 기존 클래스에서 특정 field들을 제거한 클래스를 반환
+    """
+    @classmethod
+    def all_optional(cls):
+        """
+        Creates a new model with the same fields, but all optional.
+
+        Usage: SomeOptionalModel = SomeModel.all_optional()
+        """
+        return create_model(
+            cls.__name__ + "Optional",
+            __base__=cls,
+            **{
+                name: (
+                    info.annotation, 
+                    Field(None, title=info.title, description=info.description, examples=info.examples)
+                ) for name, info in cls.model_fields.items()
+            }
+        )
+    
+    @classmethod
+    def omit_fields(cls, attr: List[str]):
+        """
+        Creates a new model with the omitted fields.
+
+        Usage: SomeOmittedModel = SomeModel.omit_fields(['name'])
+        """
+        return create_model(
+            cls.__name__ + "Omitted",
+            __base__=cls,
+            **{ 
+                name: (
+                    info.annotation, 
+                    Field(..., title=info.title, description=info.description, examples=info.examples)
+                ) for name, info in cls.model_fields.items() if name not in attr
+            }
+        )
+    
+# ===============================================================
+class BookInfoBase(BaseModel):
+    title: str = Field(..., title="title", description="책 제목", example="FastAPI Tutorial")
+    subtitle: Optional[str] = Field(None, title="subtitle", description="책 부제목", example="Build modern web APIs with Python and FastAPI")
+    author: str = Field(..., title="author", description="저자", example="John Doe")
+    publisher: str = Field(..., title="publisher", description="출판사", example="AA Publisher")
+    publication_year: _datetime = Field(..., title="publication_year", description="출판년도", example=_datetime.now().year)
+    image_url: Optional[str] = Field(None, title="image_url", description="이미지 URL", example="https://example.com/image.jpg")
+    category_id: int = Field(..., title="category_id", description="카테고리 ID", example=1, ge=0)
+    version: Optional[str] = Field(None, title="version", description="책 버전", example="1.0")
+    major: bool = Field(True, title="major", description="전공 도서 여부", example=True)
+    language: Optional[str] = Field(None, title="language", description="언어", example="English")
+
+
+class BookInfo(BookInfoBase):
+    book_info_id: int = Field(..., title="book_info_id", description="도서 정보 id", example=1, ge=0)
+    created_at: _datetime = Field(..., title="create_at", description="생성일시", example=_datetime.now())
+    updated_at: _datetime = Field(..., title="create_at", description="수정일시", example=_datetime.now())
+
+class BookInfoCreate(BookInfoBase):
+    pass
+
+class BookInfoUpdate(BookInfoBase.all_optional()):
+    pass
+
+# ===============================================================
+
+class BookBase(BaseModel):
+    book_info_id: int = Field(..., title="book_info_id", description="책과 연결된 도서 정보 id", example=1, ge=0)
+    book_status: int = Field(..., title="book_status", description="책 상태", example=1, le=0, ge=3)
+    note: Optional[str] = Field(None, title="note", description="노트", example="기부된 책")
+    donor_name: Optional[str] = Field(None, title="donor_name", description="기부자 이름", example="김철수")
+
+class Book(BookBase):
+    book_id: int = Field(..., title="book_id", description="책 정보 id", example=1, ge=0)
+    created_at: _datetime = Field(..., title="create_at", description="생성일시", example=_datetime.now())
+    updated_at: _datetime = Field(..., title="update_at", description="수정일시", example=_datetime.now())
+
+class BookCreate(BookBase):
+    pass
+
+class BookUpdate(BookBase.all_optional()):
+    pass
+#==================================================================
+class CategoryBase(BaseModel):
+    code : str = Field(..., title="code", description="카테고리 코드", examples="A")
+    name : str = Field(..., title="name", description="카테고리명", examples="인공지능")
+
+class Category(CategoryBase):
+    category_id : int = Field(..., title="category_id", description="카테고리 id", example=1, ge=0)
+    created_at: _datetime = Field(..., title="create_at", description="생성일시", example=_datetime.now())
+    updated_at: _datetime = Field(..., title="update_at", description="수정일시", example=_datetime.now())
+    is_vaild : bool = Field(..., title="is_valid", description="유효 여부", examples=True)
+
+class CategoryCreate(CategoryBase):
+    pass
+
+class CategoryUpdate(CategoryBase.all_optional()):
+    pass
+
+# ===============================================================
+class BookRequestBase(BaseModel):
+    book_title: str = Field(..., title="book_title", description="책 제목", example="FastAPI Tutorial")
+    publication_year: int = Field(..., title="publication_year", description="출판년도", example=2022, ge=0)
+    request_link: str = Field(..., title="request_link", description="요청 링크", example="https://example.com/request")
+    reason: str = Field(..., title="reason", description="이유", example="Need for study")
+
+class BookRequestInfo(BookRequestBase):
+    processing_status: int = Field(..., title="processing_status", description="처리 상태", example=0, ge=0, le=3)
+    request_date: _datetime.date = Field(..., title="request_date", description="요청 일자", example=_datetime.now().date())
+    reject_reason: Optional[str] = Field(None, title="reject_reason", description="거절 사유", example="Not available")
+
+class BookRequest(BookRequestBase):
+    user_id: int = Field(..., title="user_id", description="도서 구매를 요청한 사용자 ID", example=1, ge=0)
+    book_request_id: int = Field(..., title="book_request_id", description="도서 구매 요청 정보 id", example=1, ge=0)
+    created_at: _datetime = Field(..., title="create_at", description="생성일시", example=_datetime.now())
+    updated_at: _datetime = Field(..., title="update_at", description="수정일시", example=_datetime.now())
+
+class BookRequestCreate(BookRequestBase):
+    pass
+
+class BookRequestUpdate(BookRequestInfo.all_optional()):
+    pass
+
+# ===============================================================
+
+class LoanBase(BaseModel):
+    book_id: int = Field(..., title="book_id", description="대출한 책 ID", example=1, ge=0)
+    user_id: int = Field(..., title="user_id", description="대출한 사용자 ID", example=1, ge=0)
+    loan_date: _datetime = Field(..., title="loan_date", description="대출 날짜", example=_datetime.today())
+
+class LoanInfo(LoanBase):
+    extend_status: bool = Field(..., title="extend_status", description="연장 상태", example=True)
+    expected_return_date: _datetime = Field(..., title="expected_return_date", description="반납 기한", example=_datetime.today())
+    return_status: bool = Field(..., title="return_status", description="반납 상태", example=False)
+    return_date: _datetime = Field(..., title="return_date", description="반납 날짜", example=None)
+
+class Loan(LoanInfo):
+    loan_id: int = Field(..., title="loan_id", description="대출 정보 id", example=1, ge=0)
+    created_at: _datetime = Field(..., title="create_at", description="생성일시", example=_datetime.now())
+    updated_at: _datetime = Field(..., title="update_at", description="수정일시", example=_datetime.now())
+
+class LoanCreate(LoanBase):
+    pass
+
+class LoanUpdate(LoanInfo.all_optional()):
+    pass
+
+#=======================================================================
+
+class ReservationBase(BaseModel):
+    book_id: int = Field(..., title="book_id", description="예약한 책 ID", example=1, ge=0)
+    user_id: int = Field(..., title="user_id", description="예약한 사용자 ID", example=1, ge=0)
+    reservation_date: _datetime.date = Field(..., title="reservation_date", description="예약 날짜", example=_datetime.now().date())
+    reservation_status: int = Field(..., title="reservation_status", description="예약 상태", example=0, ge=0, le=3)
+
+class Reservation(ReservationBase):
+    reservation_id: int = Field(..., title="reservation_id", description="예약 정보 ID", example=1, ge=0)
+    created_at: _datetime = Field(..., title="create_at", description="생성일시", example=_datetime.now())
+    updated_at: _datetime = Field(..., title="update_at", description="수정일시", example=_datetime.now())
+
+class ReservationCreate(ReservationBase.omit_fields(["reservation_date", "reservation_status"])):
+    pass
+
+class ReservationUpdate(ReservationBase.all_optional()):
+    pass
+
+
+#=======================================================================
+
+class UserBase(BaseModel):
+    user_name: str = Field(..., title="user_name", description="사용자 이름", example="JohnDoe")
+    is_active: bool = Field(..., title="is_active", description="활성 상태", example=True)
+    email: str = Field(..., title="email", description="이메일", example="john.doe@example.com")
+
+class User(UserBase):
+    user_id: int = Field(..., title="user_id", description="사용자 ID", example=1, ge=0)
+    created_at: _datetime = Field(..., title="create_at", description="생성일시", example=_datetime.now())
+    updated_at: _datetime = Field(..., title="update_at", description="수정일시", example=_datetime.now())
+
+class UserUpdate(UserBase.all_optional()):
+    pass
+
+#=======================================================================
+
+class AdminBase(BaseModel):
+    user_id: int = Field(..., title="user_id", description="관리자의 일반 ID", example=1, ge=0)
+    admin_status: bool = Field(..., title="reservation_status", description="관리자 상태", example=0, ge=0, le=1)
+
+class Admin(AdminBase):
+    admin_id: int = Field(..., title="admin_id", description="관리자 ID", example=1, ge=0)
+    created_at: _datetime = Field(..., title="create_at", description="생성일시", example=_datetime.now())
+    updated_at: _datetime = Field(..., title="update_at", description="수정일시", example=_datetime.now())
+
+class AdminCreate(AdminBase.omit_fields(["admin_status"])):
+    pass
+
+class AdminUpdate(AdminBase.all_optional()):
+    pass
+
+# ==============================================================
+
+class NoticeBase(BaseModel):
+    user_id: int = Field(..., title="user_id", description="작성자(관리자)의 일반 ID", example=1, ge=0)
+    title: str = Field(..., title="title", description="공지 제목", example="Scheduled Maintenance")
+    notice_content: Optional[str] = Field(None, title="notice_content", description="공지 내용", example="The system will be down for maintenance.")
+
+
+class Notice(NoticeBase):
+    notice_id: int = Field(..., title="notice_id", description="공지사항 id", example=1, ge=0)
+    created_at: _datetime = Field(..., title="create_at", description="생성일시", example=_datetime.now())
+    updated_at: _datetime = Field(..., title="update_at", description="수정일시", example=_datetime.now())
+
+class NoticeCreate(NoticeBase):
+    pass
+
+class NoticeUpdate(NoticeBase.all_optional()):
+    pass
+
+# ==================================================================
+
+class ServiceSettingBase(BaseModel):
+    name : str = Field(..., title="name", description="설정 이름", examples="service_begin")
+    datatype: str = Field(..., title="datatype", description="데이터 유형", examples="datetime")
+    value : str = Field(..., title="datatype", description="데이터 유형", examples=_datetime.today().strftime)
+
+class ServiceSetting(ServiceSettingBase):
+    setting_id: int = Field(..., title="setting_id", description="설정 id", example=1, ge=0)
+    created_at: _datetime = Field(..., title="create_at", description="생성일시", example=_datetime.now())
+    updated_at: _datetime = Field(..., title="update_at", description="수정일시", example=_datetime.now())
+    
+class ServiceSettingCreate(ServiceSettingBase):
+    pass
+
+class ServiceSettingUpdate(ServiceSetting.all_optional()):
+    pass
