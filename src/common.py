@@ -9,38 +9,37 @@ class BaseModel(_BaseModel):
         omit_fields : 기존 클래스에서 특정 field들을 제거한 클래스를 반환
     """
     @classmethod
-    def all_optional(cls) -> type[_BaseModel]:
+    def all_optional(cls, name) -> type[_BaseModel]:
         """
         Creates a new model with the same fields, but all optional.
 
         Usage: SomeOptionalModel = SomeModel.all_optional()
         """
         return create_model(
-            cls.__name__ + "Optional",
+            name,
             __base__=cls,
             **{
                 name: (
-                    Optional[info.annotation], 
-                    Field(info.default, title=info.title, description=info.description, examples=info.examples)
+                    info.annotation, 
+                    Field(None, title=info.title, description=info.description, examples=info.examples)
                 ) for name, info in cls.model_fields.items()
             }
         )
     
     @classmethod
-    def omit_fields(cls, attr: List[str]) -> type[_BaseModel]:
+    def omit_fields(cls, name, attr: List[str]) -> type[_BaseModel]:
         """
         Creates a new model with the omitted fields.
 
         Usage: SomeOmittedModel = SomeModel.omit_fields(['name'])
         """
         return create_model(
-            cls.__name__ + "Omitted",
+            name,
             __base__=cls,
             **{ 
                 name: (
-                    info.annotation, 
-                    Field(info.default, title=info.title, description=info.description, examples=info.examples)
-                ) for name, info in cls.model_fields.items() if name not in attr
+                    info
+                ) for name, info in cls.__annotations__.items() if name not in attr
             }
         )
 
