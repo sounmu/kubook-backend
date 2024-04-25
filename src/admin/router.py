@@ -15,7 +15,7 @@ router = APIRouter(
     "/book-info",
     summary="도서 정보 목록 조회",
     response_model=List[BookInfo],
-    response_class=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK
 )
 async def get_list_book_info(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
@@ -61,7 +61,7 @@ async def delete_book_info(book_info_id: int, db: Session = Depends(get_db), cur
     "/books",
     summary="책 정보 목록 조회",
     response_model=List[Book],
-    response_class=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK
 )
 async def get_list_books(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
@@ -106,7 +106,7 @@ async def delete_book(book_id: int, db: Session = Depends(get_db), current_user=
     "/category",
     summary="전체 카테고리 목록 조회",
     response_model=List[Category],
-    response_class=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK
 )
 async def get_list_category(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
@@ -152,7 +152,7 @@ async def delete_category(category_id: int, db: Session = Depends(get_db), curre
     "/book-requests",
     summary="도서 구매 요청 목록 조회",
     response_model=List[BookRequest],
-    response_class=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK
 )
 async def get_list_book_requests(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
@@ -188,7 +188,7 @@ async def delete_book_request(request_id: int, db: Session = Depends(get_db), cu
     "/users",
     summary="전체 사용자 목록 조회",
     response_model=List[User],
-    response_class=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK
 )
 async def get_list_user(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
@@ -224,7 +224,7 @@ async def delete_user(user_id: int, db: Session = Depends(get_db), current_user=
     "/loans",
     summary="전체 대출 목록 조회",
     response_model=List[Loan],
-    response_class=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK
 )
 async def get_list_loans(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
@@ -260,7 +260,7 @@ async def delete_loan(loan_id: int, db: Session = Depends(get_db), current_user=
     "/reservations",
     summary="전체 예약 목록 조회",
     response_model=List[Reservation],
-    response_class=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK
 )
 async def get_list_reservations(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
@@ -296,7 +296,7 @@ async def delete_reservation(reservation_id: int, db: Session = Depends(get_db),
     "/notices",
     summary="전체 공지사항 목록 조회",
     response_model=List[Notice],
-    response_class=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK
 )
 async def get_list_notices(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
@@ -341,7 +341,7 @@ async def delete_notice(notice_id: int, db: Session = Depends(get_db), current_u
     "/settings",
     summary="전체 시스템 설정 목록 조회",
     response_model=List[ServiceSetting],
-    response_class=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK
 )
 async def list_get_settings(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
