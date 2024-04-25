@@ -8,6 +8,9 @@ load_dotenv(dotenv_path)
 
 
 class Settings(BaseSettings):
+    # 환경 설정
+    ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development")
+
     # SSH 설정
     SSH_HOST: str = os.getenv("SSH_HOST", "localhost")
     SSH_PORT: int = int(os.getenv("SSH_PORT", 22))
@@ -45,3 +48,10 @@ class Settings(BaseSettings):
     # Firebase 설정
     FIREBASE_SERVICE_ACCOUNT_KEY: str = os.getenv("FIREBASE_SERVICE_ACCOUNT_KEY", "firebase-service-account-key.json")
     FIREBASE_WEB_API_KEY: str = os.getenv("FIREBASE_WEB_API_KEY", "firebase-web-api-key")
+
+    # 데이터베이스 설정 - 민재 개발 환경
+    MJ_DB_HOST: str = os.getenv("MJ_DB_HOST", "localhost")
+    MJ_DB_PORT: int = int(os.getenv("MJ_DB_PORT", 3306))
+    MJ_DB_NAME: str = os.getenv("MJ_DB_NAME", "library_db")
+    MJ_DB_USER: str = os.getenv("MJ_DB_USER", "root")
+    MJ_DB_PASSWORD: str = os.getenv("MJ_DB_PASSWORD", "password")
