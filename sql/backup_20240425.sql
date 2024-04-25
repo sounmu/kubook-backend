@@ -25,10 +25,6 @@ SET @MYSQLDUMP_TEMP_LOG_BIN = @@SESSION.SQL_LOG_BIN;
 SET @@SESSION.SQL_LOG_BIN= 0;
 
 --
--- GTID state at the beginning of the backup 
---
-
---
 -- Table structure for table `admin`
 --
 
@@ -219,6 +215,36 @@ INSERT INTO `book_stat` VALUES (1,1,5,30),(2,2,10,40),(3,3,6,50),(4,4,12,60);
 UNLOCK TABLES;
 
 --
+-- Table structure for table `library_setting`
+--
+
+DROP TABLE IF EXISTS `library_setting`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `library_setting` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `value` varchar(50) NOT NULL,
+  `data_type` varchar(50) NOT NULL,
+  `description` text,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `is_valid` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb3;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `library_setting`
+--
+
+LOCK TABLES `library_setting` WRITE;
+/*!40000 ALTER TABLE `library_setting` DISABLE KEYS */;
+INSERT INTO `library_setting` VALUES (1,'backend_development_start_date','2024-04-07','DATETIME','도서관 서비스 백엔드 개발 시작일','2024-04-25 19:56:21','2024-04-25 19:56:21',1),(2,'backend devlopers','권민재, 한수빈','TEXT','개발자 목록','2024-04-25 19:56:21','2024-04-25 19:56:21',1),(3,'backend_development_end_date','','DATETIME','도서관 서비스 백엔드 개발 종료일','2024-04-25 19:56:21','2024-04-25 19:56:21',1),(4,'service_start_date','2023-06-01','DATETIME','도서관 서비스 시작일','2024-04-25 19:56:21','2024-04-25 19:56:21',1),(5,'service_termination_date','','DATETIME','도서관 서비스 종료일','2024-04-25 19:56:21','2024-04-25 19:56:21',0),(6,'max_books_per_loan','5','INTEGER','최대 대출 가능 권수','2024-04-25 19:56:21','2024-04-25 19:56:21',1),(7,'loan_duration_days','14','INTEGER','대출 기간 (일)','2024-04-25 19:56:21','2024-04-25 19:56:21',1),(8,'loan_extension_days','7','INTEGER','대출 연장 기간 (일)','2024-04-25 19:56:21','2024-04-25 19:56:21',1),(9,'max_books_per_request','3','INTEGER','최대 예약 가능 권수','2024-04-25 19:56:21','2024-04-25 19:56:21',1),(10,'max_request_value','30000','INTEGER','최대 예약 가능 금액','2024-04-25 19:56:21','2024-04-25 19:56:21',1),(11,'reservation_limit_per_user','2','INTEGER','사용자 당 최대 예약 가능 권수','2024-04-25 19:56:21','2024-04-25 19:56:21',1),(12,'reservation_limit_per_book','3','INTEGER','도서 당 최대 예약 가능 사용자 수','2024-04-25 19:56:21','2024-04-25 19:56:21',1);
+/*!40000 ALTER TABLE `library_setting` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `loan`
 --
 
@@ -359,31 +385,6 @@ INSERT INTO `reservation` VALUES (1,1,1,'2024-04-22',1,'2024-04-22 10:55:53','20
 UNLOCK TABLES;
 
 --
--- Table structure for table `service_setting`
---
-
-DROP TABLE IF EXISTS `service_setting`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `service_setting` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `service_begin` datetime NOT NULL,
-  `service_end` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `service_setting`
---
-
-LOCK TABLES `service_setting` WRITE;
-/*!40000 ALTER TABLE `service_setting` DISABLE KEYS */;
-INSERT INTO `service_setting` VALUES (1,'2024-04-01 08:00:00','2024-04-30 17:00:00');
-/*!40000 ALTER TABLE `service_setting` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `user`
 --
 
@@ -425,4 +426,4 @@ SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-25 19:25:07
+-- Dump completed on 2024-04-25 19:59:26
