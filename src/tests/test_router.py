@@ -1,7 +1,7 @@
 from typing import List
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, HTTPException, Status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, ConfigDict
 
@@ -29,7 +29,7 @@ class LibrarySettings(BaseModel):
 @router.get(
     "/library-setting",
     response_model=List[LibrarySettings],
-    status_code=Status.HTTP_200_OK,
+    status_code=status.HTTP_200_OK,
     description="""
     이 API는 get_db로 DB 연결을 테스트하기 위한 API입니다.
     모든 도서관 설정을 조회합니다.
