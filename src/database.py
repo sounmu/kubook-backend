@@ -1,37 +1,32 @@
 from sqlalchemy import create_engine, text
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from config import Settings
 
 settings = Settings()
 
-db_name = settings.DB_NAME
-db_user = settings.DB_USER
-db_password = settings.DB_PASSWORD
-
-local_host = 'localhost'
-local_port = 3307 
-
-Base = declarative_base()
-
-SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{db_user}:{db_password}@{local_host}:{local_port}/{db_name}"
 
 class EngineConnection:
+
     def __init__(self):
+        if settings.ENVIRONMENT == "development":
+            SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{settings.DB_USER}:{settings.DB_PASSWORD}@localhost:3307/{settings.DB_NAME}"
+        elif settings.ENVIRONMENT == "production":
+            SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{settings.DB_USER}:{settings.DB_PASSWORD}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"
+        elif settings.ENVIRONMENT == "development-mj":
+            SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{settings.MJ_DB_USER}:{settings.MJ_DB_PASSWORD}@{settings.MJ_DB_HOST}:{settings.MJ_DB_PORT}/{settings.MJ_DB_NAME}"
         self.engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_recycle=500, connect_args={"connect_timeout": 100})
+        self.session_local = sessionmaker(autoflush=False, autocommit=False, bind=self.engine)
 
     def get_session(self):
-        session_local = sessionmaker(autoflush=False, autocommit=False, bind=self.engine)
-        return session_local()
+        return self.session_local()
 
     def get_connection(self):
         return self.engine.connect()
-    
-    def close_engine(self):
-        return self.engine.dispose()
-    
+
+
+engine_conn = EngineConnection()
+
 
 def get_db_session():
-    engine_conn = EngineConnection()
     session = engine_conn.get_session()
     return session

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, ConfigDict
@@ -11,12 +13,17 @@ router = APIRouter(
     tags=["test"]
 )
 
-class ServiceSetting(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
 
-    service_begin: str
-    service_end: str
+class ServiceSettings(BaseModel):
+    id: int
+    service_begin: datetime
+    service_end: datetime
 
-@router.get("/service-setting")
+
+@router.get(
+    "/service-setting",
+    response_model=ServiceSettings,
+)
 async def get_service_setting(db: Session = Depends(get_db)):
-    return db.query(ServiceSetting).all()
+    service_setting = db.query(ServiceSetting).first()
+    return service_setting
