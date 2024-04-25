@@ -294,10 +294,18 @@ async def delete_notice(notice_id: int, db: Session = Depends(get_db), current_u
 # =================== 시스템 설정 =========================
 @router.get(
     "/settings",
+    summary="전체 시스템 설정 목록 조회",
+)
+async def list_get_settings(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+    pass
+
+@router.get(
+    "/settings/{setting_id}",
     summary="시스템 설정 조회",
 )
-async def get_settings(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+async def get_settings(setting_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
+
 
 @router.post(
     "/settings",
@@ -307,15 +315,15 @@ async def create_settings(db: Session = Depends(get_db), current_user=Depends(ge
     pass
 
 @router.patch(
-    "/settings",
+    "/settings/{setting_id}",
     summary="시스템 설정 수정",
 )
-async def update_settings(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+async def update_settings(setting_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
 
 @router.delete(
-    "/settings",
+    "/settings/{setting_id}",
     summary="시스템 설정 삭제",
 )
-async def delete_settings(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+async def delete_settings(setting_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
