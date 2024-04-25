@@ -87,6 +87,42 @@ async def update_book(db: Session = Depends(get_db), current_user=Depends(get_cu
 async def delete_book(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
 
+# =================== 카테고리 =========================
+
+@router.get(
+    "/category",
+    summary="전체 카테고리 목록 조회",
+)
+async def get_list_category(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+    pass
+
+@router.get(
+    "/category/{category_id}",
+    summary="카테고리 정보 조회",
+)
+async def get_category(category_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+    pass
+
+@router.post(
+    "/category",
+    summary="카테고리 생성",
+)
+async def create_category(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+    pass
+
+@router.patch(
+    "/category/{category_id}",
+    summary="카테고리 정보 수정",
+)
+async def update_category(category_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+    pass
+
+@router.delete(
+    "/category/{category_id}",
+    summary="카테고리 정보 삭제",
+)
+async def delete_category(category_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+    pass
 
 # =================== 도서 구매 요청 =========================
 
@@ -201,8 +237,6 @@ async def get_list_reservations(db: Session = Depends(get_db), current_user=Depe
 )
 async def get_reservation(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
-
-
 
 @router.patch(
     "/reservations/{reservation_id}",
