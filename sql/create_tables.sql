@@ -161,3 +161,22 @@ CREATE TABLE `library_setting` (
 	`is_valid`	BOOLEAN	NOT NULL	DEFAULT TRUE,
     PRIMARY KEY (`id`)
 );
+
+INSERT INTO `library_setting` (`name`, `value`, `data_type`, `description`, `is_valid`)
+VALUES
+  -- Service Setting 관련
+  ('service_start_date', '2023-05-01', 'DATETIME', '도서관 서비스 시작일', 1),
+  ('service_termination_date', '2023-12-31', 'DATETIME', '도서관 서비스 종료일', 1),
+
+  -- Loan Setting 관련
+  ('max_books_per_loan', '5', 'INTEGER', '최대 대출 가능 권수', 1),
+  ('loan_duration_days', '14', 'INTEGER', '대출 기간 (일)', 1),
+  ('loan_extension_days', '7', 'INTEGER', '대출 연장 기간 (일)', 1),
+
+  -- Request Setting 관련
+  ('max_books_per_request', '3', 'INTEGER', '최대 예약 가능 권수', 1),
+  ('max_request_value', '50000', 'INTEGER', '최대 예약 가능 금액', 1),
+
+  -- Reservation Setting 관련
+  ('reservation_limit_per_user', '2', 'INTEGER', '사용자 당 최대 예약 가능 권수', 1),
+  ('reservation_limit_per_book', '10', 'INTEGER', '도서 당 최대 예약 가능 사용자 수', 1);
