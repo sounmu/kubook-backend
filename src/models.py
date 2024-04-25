@@ -49,7 +49,7 @@ class Admin(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
-    admin_status = Column(Boolean, nullable=False, default=False)
+    admin_status = Column(Boolean, nullable=False)
     expiration_date = Column(Date, nullable=False)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
@@ -100,7 +100,7 @@ class BookInfo(Base):
     category_id = Column(Integer, ForeignKey("book_category.id"), nullable=False)
     version = Column(String(45))
     major = Column(Boolean, default=False)
-    language = Column(String(10), nullable=False, default="한국어")
+    language = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
     is_valid = Column(Boolean, nullable=False, default=True)
@@ -142,7 +142,7 @@ class Book(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     book_info_id = Column(Integer, ForeignKey("book_info.id"), nullable=False)
-    book_status = Column(Boolean, nullable=False, default=True)
+    book_status = Column(Integer, nullable=False, default=0)
     note = Column(String(255), default=None)
     donor_name = Column(String(255), default=None)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
@@ -191,7 +191,7 @@ class Loan(Base):
 
 
 class LibrarySetting(Base):
-    __tablename__ = "service_setting"
+    __tablename__ = "library_setting"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(50), nullable=False)
     value = Column(String(50), nullable=False)

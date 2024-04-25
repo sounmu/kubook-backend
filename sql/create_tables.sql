@@ -32,7 +32,7 @@ CREATE TABLE `requested_book` (
 CREATE TABLE `admin` (
 	`id`	INT	NOT NULL	AUTO_INCREMENT,
 	`user_id`	INT	NOT NULL,
-	`admin_status`	BOOLEAN	NOT NULL	DEFAULT FALSE,
+	`admin_status`	BOOLEAN	NOT NULL,
 	`expiration_date`	DATE	NULL,
 	`created_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 	`updated_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -75,21 +75,12 @@ CREATE TABLE `book_info` (
 	`category_id`	INT	NOT NULL,
 	`version`	VARCHAR(45)	NULL,
 	`major`	BOOLEAN	NULL	DEFAULT FALSE,
-	`language`	VARCHAR(10)	NOT NULL	DEFAULT '한국어',
+	`language`	BOOLEAN	NOT NULL	DEFAULT	TRUE,
 	`created_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
 	`updated_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	`is_valid`	BOOLEAN	NOT NULL	DEFAULT TRUE,
     PRIMARY KEY (`id`),
     FOREIGN KEY (`category_id`) REFERENCES `book_category`(`id`)
-);
-
-CREATE TABLE `book_stat` (
-	`id`	INT	NOT NULL	AUTO_INCREMENT,
-	`book_info_id`	INT	NOT NULL,
-	`review_count`	INT	NOT NULL	DEFAULT 0,
-	`loan_count`	INT	NOT NULL	DEFAULT 0,
-    PRIMARY KEY (`id`),
-    FOREIGN KEY (`book_info_id`) REFERENCES `book_info`(`id`)
 );
 
 CREATE TABLE `book_review` (
@@ -108,7 +99,7 @@ CREATE TABLE `book_review` (
 CREATE TABLE `book` (
 	`id`	INT	NOT NULL	AUTO_INCREMENT,
 	`book_info_id`	INT	NOT NULL,
-	`book_status`	BOOLEAN	NOT NULL    DEFAULT TRUE,
+	`book_status`	TINYINT	NOT NULL    DEFAULT TRUE,
 	`note`	VARCHAR(255)	NULL	DEFAULT NULL,
 	`donor_name`	VARCHAR(255)	NULL	DEFAULT NULL,
 	`created_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
@@ -185,3 +176,24 @@ VALUES
   -- Reservation Setting 관련
   ('reservation_limit_per_user', '2', 'INTEGER', '사용자 당 최대 예약 가능 권수', 1),
   ('reservation_limit_per_book', '3', 'INTEGER', '도서 당 최대 예약 가능 사용자 수', 1);
+
+CREATE VIEW `book_stat` AS
+SELECT 
+    bi.id AS book_info_id,
+    bi.title,
+    bi.author,
+    bi.publisher,
+    bi.publication_year,
+    COUNT(DISTINCT br.id) AS review_count,
+    COUNT(DISTINCT l.id) AS loan_count,
+    AVG(br.rating) AS average_rating
+FROM
+    book_info bi
+LEFT JOIN
+    book_review br ON bi.id = br.book_info_id AND br.is_valid = TRUE
+LEFT JOIN
+    book b ON bi.id = b.book_info_id AND b.is_valid = TRUE 
+LEFT JOIN
+    loan l ON b.id = l.book_id AND l.is_valid = TRUE
+GROUP BY
+    bi.id;
