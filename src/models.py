@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Text, DateTime, Date, Numeric
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Text, DateTime, Date
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from sqlalchemy.ext.declarative import declarative_base
@@ -111,17 +111,6 @@ class BookInfo(Base):
     books = relationship("Book", back_populates="book_info")
 
 
-class BookStat(Base):
-    __tablename__ = "book_stat"
-
-    id = Column(Integer, primary_key=True, index=True)
-    book_info_id = Column(Integer, ForeignKey("book_info.id"), nullable=False)
-    review_count = Column(Integer, nullable=False, default=0)
-    loan_count = Column(Integer, nullable=False, default=0)
-
-    book_info = relationship("BookInfo", back_populates="book_stat")
-
-
 class BookReview(Base):
     __tablename__ = "book_review"
 
@@ -200,3 +189,13 @@ class LibrarySetting(Base):
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
     is_valid = Column(Boolean, nullable=False, default=True)
+
+
+class BookStat(Base):
+    __tablename__ = 'book_stat'
+
+    book_info_id = Column(Integer, ForeignKey('book_info.id'), primary_key=True)
+    review_count = Column(Integer)
+    loan_count = Column(Integer)
+
+    book_info = relationship("BookInfo", viewonly=True)
