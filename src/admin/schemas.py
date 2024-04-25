@@ -1,6 +1,6 @@
 from typing import Optional
-from datetime import datetime as _datetime
-from pydantic import BaseModel as _BaseModel, Field
+from datetime import datetime as _datetime, date, timedelta
+from pydantic import Field
 from ..utils import BaseModel
 
 class BookInfoBase(BaseModel):
@@ -11,9 +11,9 @@ class BookInfoBase(BaseModel):
     publication_year: _datetime = Field(..., title="publication_year", description="출판년도", example=_datetime.now().year)
     image_url: Optional[str] = Field(None, title="image_url", description="이미지 URL", example="https://example.com/image.jpg")
     category_id: int = Field(..., title="category_id", description="카테고리 ID", example=1, ge=0)
-    version: Optional[str] = Field(None, title="version", description="책 버전", example="1.0")
-    major: bool = Field(True, title="major", description="전공 도서 여부", example=True)
-    language: Optional[str] = Field(None, title="language", description="언어", example="English")
+    version: Optional[str] = Field(None, title="version", description="책 버전", example="1판")
+    major: Optional[bool] = Field(None, title="major", description="전공 도서 여부", example=False, default=False)
+    language: Optional[bool] = Field(None, title="language", description="True: 국문, False: 영문", example=True, default=True)
 
 
 class BookInfo(BookInfoBase):
@@ -31,7 +31,7 @@ class BookInfoUpdate(BookInfoBase.all_optional()):
 
 class BookBase(BaseModel):
     book_info_id: int = Field(..., title="book_info_id", description="책과 연결된 도서 정보 id", example=1, ge=0)
-    book_status: int = Field(..., title="book_status", description="책 상태", example=1, le=0, ge=3)
+    book_status: int = Field(..., title="book_status", description="책 상태", example=1, le=0, ge=3, default=0)
     note: Optional[str] = Field(None, title="note", description="노트", example="기부된 책")
     donor_name: Optional[str] = Field(None, title="donor_name", description="기부자 이름", example="김철수")
 
@@ -70,8 +70,8 @@ class BookRequestBase(BaseModel):
     reason: str = Field(..., title="reason", description="이유", example="Need for study")
 
 class BookRequestInfo(BookRequestBase):
-    processing_status: int = Field(..., title="processing_status", description="처리 상태", example=0, ge=0, le=3)
-    request_date: _datetime.date = Field(..., title="request_date", description="요청 일자", example=_datetime.now().date())
+    processing_status: int = Field(..., title="processing_status", description="처리 상태", example=0, ge=0, le=3, default=0)
+    request_date: date = Field(..., title="request_date", description="요청 일자", example=_datetime.now().date())
     reject_reason: Optional[str] = Field(None, title="reject_reason", description="거절 사유", example="Not available")
 
 class BookRequest(BookRequestBase):
@@ -91,13 +91,14 @@ class BookRequestUpdate(BookRequestInfo.all_optional()):
 class LoanBase(BaseModel):
     book_id: int = Field(..., title="book_id", description="대출한 책 ID", example=1, ge=0)
     user_id: int = Field(..., title="user_id", description="대출한 사용자 ID", example=1, ge=0)
-    loan_date: _datetime = Field(..., title="loan_date", description="대출 날짜", example=_datetime.today())
-
+    
 class LoanInfo(LoanBase):
-    extend_status: bool = Field(..., title="extend_status", description="연장 상태", example=True)
-    expected_return_date: _datetime = Field(..., title="expected_return_date", description="반납 기한", example=_datetime.today())
-    return_status: bool = Field(..., title="return_status", description="반납 상태", example=False)
-    return_date: _datetime = Field(..., title="return_date", description="반납 날짜", example=None)
+    loan_date: date = Field(..., title="loan_date", description="대출 날짜", example=_datetime.today().date())
+    due_date: date = Field(..., title="due_date", description="반납 기한", example=(_datetime.today() + timedelta(days=14)).date())
+    extend_status: bool = Field(..., title="extend_status", description="연장 상태", example=True, default=False)
+    overdue_days : int = Field(..., title="overdue_days", description="연체 일자", examples=1, default=0)
+    return_status: bool = Field(..., title="return_status", description="반납 상태", example=False, default=False)
+    return_date: Optional[date] = Field(None, title="return_date", description="반납 날짜", example=None)
 
 class Loan(LoanInfo):
     loan_id: int = Field(..., title="loan_id", description="대출 정보 id", example=1, ge=0)
@@ -115,8 +116,8 @@ class LoanUpdate(LoanInfo.all_optional()):
 class ReservationBase(BaseModel):
     book_id: int = Field(..., title="book_id", description="예약한 책 ID", example=1, ge=0)
     user_id: int = Field(..., title="user_id", description="예약한 사용자 ID", example=1, ge=0)
-    reservation_date: _datetime.date = Field(..., title="reservation_date", description="예약 날짜", example=_datetime.now().date())
-    reservation_status: int = Field(..., title="reservation_status", description="예약 상태", example=0, ge=0, le=3)
+    reservation_date: date = Field(..., title="reservation_date", description="예약 날짜", example=_datetime.now().date())
+    reservation_status: int = Field(..., title="reservation_status", description="예약 상태", example=0, ge=0, le=3, default=0)
 
 class Reservation(ReservationBase):
     reservation_id: int = Field(..., title="reservation_id", description="예약 정보 ID", example=1, ge=0)
@@ -134,7 +135,7 @@ class ReservationUpdate(ReservationBase.all_optional()):
 
 class UserBase(BaseModel):
     user_name: str = Field(..., title="user_name", description="사용자 이름", example="JohnDoe")
-    is_active: bool = Field(..., title="is_active", description="활성 상태", example=True)
+    is_active: bool = Field(..., title="is_active", description="활성 상태", example=True, default=True)
     email: str = Field(..., title="email", description="이메일", example="john.doe@example.com")
 
 class User(UserBase):
@@ -149,7 +150,8 @@ class UserUpdate(UserBase.all_optional()):
 
 class AdminBase(BaseModel):
     user_id: int = Field(..., title="user_id", description="관리자의 일반 ID", example=1, ge=0)
-    admin_status: bool = Field(..., title="reservation_status", description="관리자 상태", example=0, ge=0, le=1)
+    admin_status: bool = Field(..., title="reservation_status", description="관리자 상태", example=True)
+    expiration_date: date = Field(..., title="expiration_date", description="권한 기한", examples=(_datetime.now() + timedelta(days=365)).date())
 
 class Admin(AdminBase):
     admin_id: int = Field(..., title="admin_id", description="관리자 ID", example=1, ge=0)
@@ -169,7 +171,6 @@ class NoticeBase(BaseModel):
     title: str = Field(..., title="title", description="공지 제목", example="Scheduled Maintenance")
     notice_content: Optional[str] = Field(None, title="notice_content", description="공지 내용", example="The system will be down for maintenance.")
 
-
 class Notice(NoticeBase):
     notice_id: int = Field(..., title="notice_id", description="공지사항 id", example=1, ge=0)
     created_at: _datetime = Field(..., title="create_at", description="생성일시", example=_datetime.now())
@@ -185,14 +186,16 @@ class NoticeUpdate(NoticeBase.all_optional()):
 
 class ServiceSettingBase(BaseModel):
     name : str = Field(..., title="name", description="설정 이름", examples="service_begin")
-    datatype: str = Field(..., title="datatype", description="데이터 유형", examples="datetime")
-    value : str = Field(..., title="datatype", description="데이터 유형", examples=_datetime.today().strftime)
+    data_type: str = Field(..., title="datatype", description="데이터 유형", examples="datetime")
+    value : str = Field(..., title="value", description="설정 값", examples=_datetime.today().strftime)
+    description : Optional[str] = Field(None, title="description", description="설정 설명", examples="서비스가 시작하는 날짜. 해당 일시 이후로 대출, 반납, 예약, 도서 구매요청 가능")
 
 class ServiceSetting(ServiceSettingBase):
     setting_id: int = Field(..., title="setting_id", description="설정 id", example=1, ge=0)
     created_at: _datetime = Field(..., title="create_at", description="생성일시", example=_datetime.now())
     updated_at: _datetime = Field(..., title="update_at", description="수정일시", example=_datetime.now())
-    
+    is_vaild : bool = Field(..., title="is_valid", description="유효 여부", examples=True)
+
 class ServiceSettingCreate(ServiceSettingBase):
     pass
 
