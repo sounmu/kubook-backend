@@ -1,12 +1,13 @@
+from typing import List
 from datetime import datetime
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, Status
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, ConfigDict
 
 from dependencies import get_db
 
-from models import ServiceSetting
+from models import LibrarySetting
 
 router = APIRouter(
     prefix="/test",
@@ -14,16 +15,31 @@ router = APIRouter(
 )
 
 
-class ServiceSettings(BaseModel):
+class LibrarySettings(BaseModel):
     id: int
-    service_begin: datetime
-    service_end: datetime
+    name: str
+    value: str
+    data_type: str
+    description: str
+    created_at: datetime
+    updated_at: datetime
+    is_valid: bool
 
 
 @router.get(
-    "/service-setting",
-    response_model=ServiceSettings,
+    "/library-setting",
+    response_model=List[LibrarySettings],
+    status_code=Status.HTTP_200_OK,
+    description="""
+    이 API는 get_db로 DB 연결을 테스트하기 위한 API입니다.
+    모든 도서관 설정을 조회합니다.
+    """,
+    summary="모든 도서관 설정 조회",
+    response_description={
+        200: {"description": "모든 도서관 설정 조회 성공"},
+        500: {"description": "서버 에러"}
+    }
 )
-async def get_service_setting(db: Session = Depends(get_db)):
-    service_setting = db.query(ServiceSetting).first()
-    return service_setting
+async def get_library_setting(db: Session = Depends(get_db)):
+    library_settings = db.query(LibrarySetting).all()
+    return library_settings
