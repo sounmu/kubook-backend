@@ -99,7 +99,7 @@ CREATE TABLE `book_review` (
 CREATE TABLE `book` (
 	`id`	INT	NOT NULL	AUTO_INCREMENT,
 	`book_info_id`	INT	NOT NULL,
-	`book_status`	TINYINT	NOT NULL    DEFAULT TRUE,
+	`book_status`	TINYINT	NOT NULL    DEFAULT 0,
 	`note`	VARCHAR(255)	NULL	DEFAULT NULL,
 	`donor_name`	VARCHAR(255)	NULL	DEFAULT NULL,
 	`created_at`	DATETIME	NOT NULL	DEFAULT CURRENT_TIMESTAMP,
@@ -165,34 +165,29 @@ VALUES
   ('service_termination_date', '', 'DATETIME', '도서관 서비스 종료일', 0),
 
   -- Loan Setting 관련
-  ('max_books_per_loan', '5', 'INTEGER', '최대 대출 가능 권수', 1),
-  ('loan_duration_days', '14', 'INTEGER', '대출 기간 (일)', 1),
-  ('loan_extension_days', '7', 'INTEGER', '대출 연장 기간 (일)', 1),
+  ('max_books_per_loan', '5', 'INT', '최대 대출 가능 권수', 1),
+  ('loan_duration_days', '14', 'INT', '대출 기간 (일)', 1),
+  ('loan_extension_days', '7', 'INT', '대출 연장 기간 (일)', 1),
 
   -- Request Setting 관련
-  ('max_books_per_request', '3', 'INTEGER', '최대 예약 가능 권수', 1),
-  ('max_request_value', '30000', 'INTEGER', '최대 예약 가능 금액', 1),
+  ('max_books_per_request', '3', 'INT', '최대 예약 가능 권수', 1),
+  ('max_request_value', '30000', 'INT', '최대 예약 가능 금액', 1),
 
   -- Reservation Setting 관련
-  ('reservation_limit_per_user', '2', 'INTEGER', '사용자 당 최대 예약 가능 권수', 1),
-  ('reservation_limit_per_book', '3', 'INTEGER', '도서 당 최대 예약 가능 사용자 수', 1);
+  ('reservation_limit_per_user', '2', 'INT', '사용자 당 최대 예약 가능 권수', 1),
+  ('reservation_limit_per_book', '3', 'INT', '도서 당 최대 예약 가능 사용자 수', 1);
 
 CREATE VIEW `book_stat` AS
 SELECT 
     bi.id AS book_info_id,
-    bi.title,
-    bi.author,
-    bi.publisher,
-    bi.publication_year,
     COUNT(DISTINCT br.id) AS review_count,
-    COUNT(DISTINCT l.id) AS loan_count,
-    AVG(br.rating) AS average_rating
+    COUNT(DISTINCT l.id) AS loan_count
 FROM
     book_info bi
 LEFT JOIN
     book_review br ON bi.id = br.book_info_id AND br.is_valid = TRUE
 LEFT JOIN
-    book b ON bi.id = b.book_info_id AND b.is_valid = TRUE 
+    book b ON bi.id = b.book_info_id
 LEFT JOIN
     loan l ON b.id = l.book_id AND l.is_valid = TRUE
 GROUP BY
