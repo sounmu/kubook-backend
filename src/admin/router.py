@@ -22,7 +22,7 @@ async def get_list_book_info(db: Session = Depends(get_db), current_user=Depends
     "/book-info/{book_info_id}",
     summary="도서 정보 조회",
 )
-async def get_book_info(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+async def get_book_info(book_info_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
 
 @router.post(
@@ -36,7 +36,7 @@ async def create_book_info(db: Session = Depends(get_db), current_user=Depends(g
     "/book_info/{book_info_id}",
     summary="도서 정보 수정",
 )
-async def update_book_info(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+async def update_book_info(book_info_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
 
 
@@ -44,13 +44,13 @@ async def update_book_info(db: Session = Depends(get_db), current_user=Depends(g
     "/book_info/{book_info_id}",
     summary="도서 정보 삭제",
 )
-async def delete_book_info(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+async def delete_book_info(book_info_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
 
 # =================== 책 정보 =========================
 
 @router.get(
-    "/book-info",
+    "/books",
     summary="책 정보 목록 조회",
 )
 async def get_list_book_info(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
@@ -58,10 +58,10 @@ async def get_list_book_info(db: Session = Depends(get_db), current_user=Depends
 
 
 @router.get(
-    "/book-info/{book_info_id}",
+    "/books/{book_id}",
     summary="책 정보 조회",
 )
-async def get_book_info(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+async def get_book_info(book_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
 
 @router.post(
@@ -73,10 +73,10 @@ async def create_book(db: Session = Depends(get_db), current_user=Depends(get_cu
 
 
 @router.patch(
-    "/book/{book_id}",
+    "/books/{book_id}",
     summary="책 정보 수정",
 )
-async def update_book(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+async def update_book(book_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
 
 
@@ -84,7 +84,7 @@ async def update_book(db: Session = Depends(get_db), current_user=Depends(get_cu
     "/books/{book_id}",
     summary="책 정보 삭제",
 )
-async def delete_book(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+async def delete_book(book_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
 
 # =================== 카테고리 =========================
@@ -136,9 +136,9 @@ async def get_list_book_requests(db: Session = Depends(get_db), current_user=Dep
 
 @router.get(
     "/book-requests/{request_id}",
-    summary="도서 구매 요청 상세 정보 조회",
+    summary="도서 구매 요청 정보 조회",
 )
-async def get_book_request(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+async def get_book_request(request_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
 
 
@@ -146,7 +146,7 @@ async def get_book_request(db: Session = Depends(get_db), current_user=Depends(g
     "/book-requests/{request_id}",
     summary="도서 구매 요청 수정",
 )
-async def update_book_request(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+async def update_book_request(request_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
 
 
@@ -154,7 +154,7 @@ async def update_book_request(db: Session = Depends(get_db), current_user=Depend
     "/book-requests/{request_id}",
     summary="도서 구매 요청 삭제(미개발)",
 )
-async def delete_book_request(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+async def delete_book_request(request_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
 
 
@@ -171,7 +171,7 @@ async def get_list_user(db: Session = Depends(get_db), current_user=Depends(get_
     "/users/{user_id}",
     summary="사용자 정보 조회",
 )
-async def get_user(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+async def get_user(user_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
 
 
@@ -179,7 +179,7 @@ async def get_user(db: Session = Depends(get_db), current_user=Depends(get_curre
     "/users/{user_id}",
     summary="사용자 정보 수정",
 )
-async def update_user(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+async def update_user(user_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
 
 
@@ -187,7 +187,7 @@ async def update_user(db: Session = Depends(get_db), current_user=Depends(get_cu
     "/users/{user_id}",
     summary="사용자 정보 삭제",
 )
-async def delete_user(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+async def delete_user(user_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
 
 
@@ -205,21 +205,21 @@ async def get_list_loans(db: Session = Depends(get_db), current_user=Depends(get
     "/loans/{loan_id}",
     summary="대출 정보 조회",
 )
-async def get_loan(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+async def get_loan(loan_id:int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
 
 @router.patch(
     "/loans/{loan_id}",
     summary="대출 정보 수정",
 )
-async def update_loan(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+async def update_loan(loan_id:int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
 
 @router.delete(
     "/loans/{loan_id}",
     summary="대출 정보 삭제",
 )
-async def delete_loan(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+async def delete_loan(loan_id:int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
 
 # =================== 예약 정보 =========================
@@ -235,22 +235,21 @@ async def get_list_reservations(db: Session = Depends(get_db), current_user=Depe
     "/reservations/{reservation_id}",
     summary="예약 정보 조회",
 )
-async def get_reservation(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+async def get_reservation(reservation_id:int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
 
 @router.patch(
     "/reservations/{reservation_id}",
     summary="예약 정보 수정",
 )
-async def update_reservation(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+async def update_reservation(reservation_id:int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
-
 
 @router.delete(
     "/reservations/{reservation_id}",
     summary="예약 정보 삭제",
 )
-async def delete_reservatione(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+async def delete_reservatione(reservation_id :int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
 
 # =================== 공지사항 =========================
@@ -265,7 +264,7 @@ async def get_list_notices(db: Session = Depends(get_db), current_user=Depends(g
     "/notices/{notice_id}",
     summary="공지사항 조회",
 )
-async def get_notice(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+async def get_notice(notice_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
 
 
@@ -281,7 +280,7 @@ async def create_notice(db: Session = Depends(get_db), current_user=Depends(get_
     "/notices/{notice_id}",
     summary="공지사항 수정",
 )
-async def update_notice(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+async def update_notice(notice_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
 
 
@@ -289,7 +288,7 @@ async def update_notice(db: Session = Depends(get_db), current_user=Depends(get_
     "/notices/{notice_id}",
     summary="공지사항 삭제",
 )
-async def delete_notice(db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
+async def delete_notice(notice_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_admin_user)):
     pass
 
 # =================== 시스템 설정 =========================
