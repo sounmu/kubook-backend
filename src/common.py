@@ -31,20 +31,14 @@ class BaseModel(_BaseModel):
         """
         Creates a new model with the omitted fields.
 
-        Usage: SomeOmittedModel = SomeModel.omit_fields(['name'])
+        Usage: SomeOmittedModel = SomeModel.omit_fields("SomeOmittedModel", ['name'])
         """
-                
-        # Filter out fields to be omitted
         new_annotations = {
             name: (
                     info.annotation, 
                     Field(info.default, title=info.title, description=info.description, examples=info.examples)
                 ) for name, info in cls.model_fields.items() if name not in attrs
         }
-        print(new_annotations)
-        # Create a new model
-        new_model = create_model(name, __base__=BaseModel, **new_annotations)
-        
-        return new_model
+        return create_model(name, __base__=BaseModel, **new_annotations)
 
 # ===============================================================
