@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Text, DateTime, Date, Numeric
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Text, DateTime, Date
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from sqlalchemy.ext.declarative import declarative_base
@@ -49,7 +49,7 @@ class Admin(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
-    admin_status = Column(Boolean, nullable=False, default=False)
+    admin_status = Column(Boolean, nullable=False)
     expiration_date = Column(Date, nullable=False)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
@@ -100,7 +100,7 @@ class BookInfo(Base):
     category_id = Column(Integer, ForeignKey("book_category.id"), nullable=False)
     version = Column(String(45))
     major = Column(Boolean, default=False)
-    language = Column(String(10), nullable=False, default="한국어")
+    language = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
     is_valid = Column(Boolean, nullable=False, default=True)
@@ -109,17 +109,6 @@ class BookInfo(Base):
     book_stat = relationship("BookStat", back_populates="book_info")
     book_reviews = relationship("BookReview", back_populates="book_info")
     books = relationship("Book", back_populates="book_info")
-
-
-class BookStat(Base):
-    __tablename__ = "book_stat"
-
-    id = Column(Integer, primary_key=True, index=True)
-    book_info_id = Column(Integer, ForeignKey("book_info.id"), nullable=False)
-    review_count = Column(Integer, nullable=False, default=0)
-    loan_count = Column(Integer, nullable=False, default=0)
-
-    book_info = relationship("BookInfo", back_populates="book_stat")
 
 
 class BookReview(Base):
@@ -142,7 +131,7 @@ class Book(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     book_info_id = Column(Integer, ForeignKey("book_info.id"), nullable=False)
-    book_status = Column(Boolean, nullable=False, default=True)
+    book_status = Column(Integer, nullable=False, default=0)
     note = Column(String(255), default=None)
     donor_name = Column(String(255), default=None)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
@@ -191,7 +180,7 @@ class Loan(Base):
 
 
 class LibrarySetting(Base):
-    __tablename__ = "service_setting"
+    __tablename__ = "library_setting"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(50), nullable=False)
     value = Column(String(50), nullable=False)
@@ -200,3 +189,13 @@ class LibrarySetting(Base):
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
     is_valid = Column(Boolean, nullable=False, default=True)
+
+
+class BookStat(Base):
+    __tablename__ = 'book_stat'
+
+    book_info_id = Column(Integer, ForeignKey('book_info.id'), primary_key=True)
+    review_count = Column(Integer)
+    loan_count = Column(Integer)
+
+    book_info = relationship("BookInfo", viewonly=True)
