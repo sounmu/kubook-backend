@@ -24,7 +24,8 @@ class BookInfo(BookInfoBase):
 class BookInfoCreate(BookInfoBase):
     pass
 
-BookInfoUpdate = BookInfoBase.all_optional("BookInfoUpdate")
+class BookInfoUpdate(BookInfoBase.all_optional("BookInfoUpdate")):
+    pass
 
 
 # ===============================================================
@@ -40,9 +41,11 @@ class Book(BookBase):
     created_at: _datetime = Field(..., title="create_at", description="생성일시", example=_datetime.now())
     updated_at: _datetime = Field(..., title="update_at", description="수정일시", example=_datetime.now())
 
-BookCreate = BookBase.omit_fields("BookCreate", ["book_status"])
+class BookCreate(BookBase.omit_fields('BookCreate',['book_status'])):
+    pass
 
-BookUpdate = BookBase.all_optional("BookUpdate")
+class BookUpdate(BookBase.all_optional("BookUpdate")):
+    pass
 #==================================================================
 class CategoryBase(BaseModel):
     code : str = Field(..., title="code", description="카테고리 코드", example="A")
@@ -57,7 +60,8 @@ class Category(CategoryBase):
 class CategoryCreate(CategoryBase):
     pass
 
-CategoryUpdate = CategoryBase.all_optional("CategoryUpdate")
+class CategoryUpdate(CategoryBase.all_optional("CategoryUpdate")):
+    pass
 
 # ===============================================================
 class BookRequestBase(BaseModel):
@@ -80,7 +84,8 @@ class BookRequest(BookRequestBase):
 class BookRequestCreate(BookRequestBase):
     pass
 
-BookRequestUpdate = BookRequestInfo.all_optional("BookRequestUpdate")
+class BookRequestUpdate(BookRequestInfo.all_optional("BookRequestUpdate")):
+    pass
 
 
 # ===============================================================
@@ -105,7 +110,8 @@ class Loan(LoanInfo):
 class LoanCreate(LoanBase):
     pass
 
-LoanUpdate = LoanInfo.all_optional("LoanUpdate")
+class LoanUpdate(LoanInfo.all_optional("LoanUpdate")):
+    pass
 
 
 #=======================================================================
@@ -121,9 +127,11 @@ class Reservation(ReservationBase):
     created_at: _datetime = Field(..., title="create_at", description="생성일시", example=_datetime.now())
     updated_at: _datetime = Field(..., title="update_at", description="수정일시", example=_datetime.now())
 
-ReservationCreate = ReservationBase.omit_fields("ReservationCreate", ["reservation_date", "reservation_status"])
+class ReservationCreate(ReservationBase.omit_fields("ReservationCreate", ["reservation_date", "reservation_status"])):
+    pass
 
-ReservationUpdate = ReservationBase.all_optional("ReservationUpdate")
+class ReservationUpdate(ReservationBase.all_optional("ReservationUpdate")):
+    pass
 
 
 #=======================================================================
@@ -138,7 +146,8 @@ class User(UserBase):
     created_at: _datetime = Field(..., title="create_at", description="생성일시", example=_datetime.now())
     updated_at: _datetime = Field(..., title="update_at", description="수정일시", example=_datetime.now())
 
-UserUpdate = UserBase.all_optional("UserUpdate")
+class UserUpdate(UserBase.all_optional("UserUpdate")):
+    pass
 
 #=======================================================================
 
@@ -152,9 +161,11 @@ class Admin(AdminBase):
     created_at: _datetime = Field(..., title="create_at", description="생성일시", example=_datetime.now())
     updated_at: _datetime = Field(..., title="update_at", description="수정일시", example=_datetime.now())
 
-AdminCreate = AdminBase.omit_fields("AdminCreate", ["admin_status"])
+class AdminCreate(AdminBase.omit_fields("AdminCreate", ["admin_status"])):
+    pass
 
-AdminUpdate =  AdminBase.all_optional("AdminUpdate")
+class AdminUpdate(AdminBase.all_optional("AdminUpdate")):
+    pass
 
 # ==============================================================
 
@@ -171,7 +182,8 @@ class Notice(NoticeBase):
 class NoticeCreate(NoticeBase):
     pass
 
-NoticeUpdate = NoticeBase.all_optional("NoticeUpdate")
+class NoticeUpdate(NoticeBase.all_optional("NoticeUpdate")):
+    pass
 
 
 # ==================================================================
@@ -191,4 +203,5 @@ class ServiceSetting(ServiceSettingBase):
 class ServiceSettingCreate(ServiceSettingBase):
     pass
 
-ServiceSettingUpdate = ServiceSetting.all_optional("ServiceSettingUpdate")
+class ServiceSettingUpdate(ServiceSetting.all_optional("ServiceSettingUpdate")):
+    pass
