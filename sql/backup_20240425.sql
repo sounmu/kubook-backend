@@ -3,6 +3,11 @@
 -- 개발 환경에서 사용하면 편하게 개발을 진행할 수 있습니다.
 -- made by @mjkweon17, created at 2024-04-25 19:27
 
+-- 다음과 같이 view 생성 쿼리 주변에 DEFINER 정보가 있다면 삭제해주세요!
+-- /*!50013 DEFINER=`kubook`@`%` SQL SECURITY DEFINER */
+
+
+
 CREATE DATABASE  IF NOT EXISTS `kubook_db` /*!40100 DEFAULT CHARACTER SET utf8mb3 */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `kubook_db`;
 -- MySQL dump 10.13  Distrib 8.0.33, for Win64 (x86_64)
@@ -25,10 +30,6 @@ SET @MYSQLDUMP_TEMP_LOG_BIN = @@SESSION.SQL_LOG_BIN;
 SET @@SESSION.SQL_LOG_BIN= 0;
 
 --
--- GTID state at the beginning of the backup 
---
-
---
 -- Table structure for table `admin`
 --
 
@@ -38,7 +39,7 @@ DROP TABLE IF EXISTS `admin`;
 CREATE TABLE `admin` (
   `id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
-  `admin_status` tinyint(1) NOT NULL DEFAULT '0',
+  `admin_status` tinyint(1) NOT NULL,
   `expiration_date` date NOT NULL,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -69,7 +70,7 @@ DROP TABLE IF EXISTS `book`;
 CREATE TABLE `book` (
   `id` int NOT NULL AUTO_INCREMENT,
   `book_info_id` int NOT NULL,
-  `book_status` tinyint(1) NOT NULL DEFAULT '1',
+  `book_status` tinyint NOT NULL DEFAULT '0',
   `note` varchar(255) DEFAULT NULL,
   `donor_name` varchar(255) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -137,7 +138,7 @@ CREATE TABLE `book_info` (
   `category_id` int NOT NULL,
   `version` varchar(45) DEFAULT NULL,
   `major` tinyint(1) DEFAULT '0',
-  `language` varchar(10) NOT NULL DEFAULT '한국어',
+  `language` tinyint(1) DEFAULT '1',
   `is_valid` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -153,7 +154,7 @@ CREATE TABLE `book_info` (
 
 LOCK TABLES `book_info` WRITE;
 /*!40000 ALTER TABLE `book_info` DISABLE KEYS */;
-INSERT INTO `book_info` VALUES (1,'파이썬 공부',NULL,'민재','KUCC 출판사',2024,NULL,1,NULL,0,'한국어',1,'2024-04-22 09:46:59','2024-04-22 10:43:41'),(2,'인공지능 공부',NULL,'민재','KUCC 출판사',2023,NULL,2,NULL,0,'한국어',1,'2024-04-22 09:46:59','2024-04-22 10:43:41'),(3,'PHP 공부',NULL,'민재','KUCC 출판사',2024,NULL,3,NULL,0,'한국어',1,'2024-04-22 09:46:59','2024-04-22 10:43:41'),(4,'C++ 공부',NULL,'민재','KUCC 출판사',2021,NULL,1,NULL,0,'한국어',0,'2024-04-22 09:46:59','2024-04-22 10:44:15');
+INSERT INTO `book_info` VALUES (1,'파이썬 공부',NULL,'민재','KUCC 출판사',2024,NULL,1,NULL,0,NULL,1,'2024-04-22 09:46:59','2024-04-25 20:09:33'),(2,'인공지능 공부',NULL,'민재','KUCC 출판사',2023,NULL,2,NULL,0,NULL,1,'2024-04-22 09:46:59','2024-04-25 20:09:33'),(3,'PHP 공부',NULL,'민재','KUCC 출판사',2024,NULL,3,NULL,0,NULL,1,'2024-04-22 09:46:59','2024-04-25 20:09:33'),(4,'C++ 공부',NULL,'민재','KUCC 출판사',2021,NULL,1,NULL,0,NULL,0,'2024-04-22 09:46:59','2024-04-25 20:09:33');
 /*!40000 ALTER TABLE `book_info` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -191,31 +192,47 @@ INSERT INTO `book_review` VALUES (1,1,1,'최고의 책입니다',1,'2024-04-22 1
 UNLOCK TABLES;
 
 --
--- Table structure for table `book_stat`
+-- Temporary view structure for view `book_stat`
 --
 
 DROP TABLE IF EXISTS `book_stat`;
+/*!50001 DROP VIEW IF EXISTS `book_stat`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `book_stat` AS SELECT 
+ 1 AS `book_info_id`,
+ 1 AS `review_count`,
+ 1 AS `loan_count`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `library_setting`
+--
+
+DROP TABLE IF EXISTS `library_setting`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `book_stat` (
+CREATE TABLE `library_setting` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `book_info_id` int NOT NULL,
-  `review_count` int NOT NULL DEFAULT '0',
-  `loan_count` int NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`),
-  KEY `book_info_id` (`book_info_id`),
-  CONSTRAINT `book_stat_ibfk_1` FOREIGN KEY (`book_info_id`) REFERENCES `book_info` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3;
+  `name` varchar(50) NOT NULL,
+  `value` varchar(50) NOT NULL,
+  `data_type` varchar(50) NOT NULL,
+  `description` text,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `is_valid` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb3;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `book_stat`
+-- Dumping data for table `library_setting`
 --
 
-LOCK TABLES `book_stat` WRITE;
-/*!40000 ALTER TABLE `book_stat` DISABLE KEYS */;
-INSERT INTO `book_stat` VALUES (1,1,5,30),(2,2,10,40),(3,3,6,50),(4,4,12,60);
-/*!40000 ALTER TABLE `book_stat` ENABLE KEYS */;
+LOCK TABLES `library_setting` WRITE;
+/*!40000 ALTER TABLE `library_setting` DISABLE KEYS */;
+INSERT INTO `library_setting` VALUES (1,'backend_development_start_date','2024-04-07','DATETIME','도서관 서비스 백엔드 개발 시작일','2024-04-25 19:56:21','2024-04-25 19:56:21',1),(2,'backend devlopers','권민재, 한수빈','TEXT','개발자 목록','2024-04-25 19:56:21','2024-04-25 19:56:21',1),(3,'backend_development_end_date','','DATETIME','도서관 서비스 백엔드 개발 종료일','2024-04-25 19:56:21','2024-04-25 19:56:21',1),(4,'service_start_date','2023-06-01','DATETIME','도서관 서비스 시작일','2024-04-25 19:56:21','2024-04-25 19:56:21',1),(5,'service_termination_date','','DATETIME','도서관 서비스 종료일','2024-04-25 19:56:21','2024-04-25 19:56:21',0),(6,'max_books_per_loan','5','INT','최대 대출 가능 권수','2024-04-25 19:56:21','2024-04-25 21:56:34',1),(7,'loan_duration_days','14','INT','대출 기간 (일)','2024-04-25 19:56:21','2024-04-25 21:56:34',1),(8,'loan_extension_days','7','INT','대출 연장 기간 (일)','2024-04-25 19:56:21','2024-04-25 21:56:34',1),(9,'max_books_per_request','3','INT','최대 예약 가능 권수','2024-04-25 19:56:21','2024-04-25 21:56:34',1),(10,'max_request_value','30000','INT','최대 예약 가능 금액','2024-04-25 19:56:21','2024-04-25 21:56:34',1),(11,'reservation_limit_per_user','2','INT','사용자 당 최대 예약 가능 권수','2024-04-25 19:56:21','2024-04-25 21:56:34',1),(12,'reservation_limit_per_book','3','INT','도서 당 최대 예약 가능 사용자 수','2024-04-25 19:56:21','2024-04-25 21:56:34',1);
+/*!40000 ALTER TABLE `library_setting` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -359,31 +376,6 @@ INSERT INTO `reservation` VALUES (1,1,1,'2024-04-22',1,'2024-04-22 10:55:53','20
 UNLOCK TABLES;
 
 --
--- Table structure for table `service_setting`
---
-
-DROP TABLE IF EXISTS `service_setting`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `service_setting` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `service_begin` datetime NOT NULL,
-  `service_end` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `service_setting`
---
-
-LOCK TABLES `service_setting` WRITE;
-/*!40000 ALTER TABLE `service_setting` DISABLE KEYS */;
-INSERT INTO `service_setting` VALUES (1,'2024-04-01 08:00:00','2024-04-30 17:00:00');
-/*!40000 ALTER TABLE `service_setting` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `user`
 --
 
@@ -414,6 +406,23 @@ LOCK TABLES `user` WRITE;
 INSERT INTO `user` VALUES (1,'1','(테스트)어드민',1,'test@gmail.com','2024-04-22 09:20:29','2024-04-22 09:37:21',1),(2,'2','(테스트)일반',1,'test1@gmail.com','2024-04-22 09:37:21','2024-04-22 09:37:21',1),(3,'3','(테스트)비활',0,'test2@gmail.com','2024-04-22 09:38:02','2024-04-22 09:38:02',1),(4,'4','(테스트)무효',0,'test3@gmail.com','2024-04-22 09:38:02','2024-04-24 23:08:26',0);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Final view structure for view `book_stat`
+--
+
+/*!50001 DROP VIEW IF EXISTS `book_stat`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50001 VIEW `book_stat` AS select `bi`.`id` AS `book_info_id`,count(distinct `br`.`id`) AS `review_count`,count(distinct `l`.`id`) AS `loan_count` from (((`book_info` `bi` left join `book_review` `br` on(((`bi`.`id` = `br`.`book_info_id`) and (`br`.`is_valid` = true)))) left join `book` `b` on((`bi`.`id` = `b`.`book_info_id`))) left join `loan` `l` on(((`b`.`id` = `l`.`book_id`) and (`l`.`is_valid` = true)))) group by `bi`.`id` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -425,4 +434,4 @@ SET @@SESSION.SQL_LOG_BIN = @MYSQLDUMP_TEMP_LOG_BIN;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-25 19:25:07
+-- Dump completed on 2024-04-25 21:58:47
