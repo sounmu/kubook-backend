@@ -7,6 +7,7 @@ from config import Settings
 
 from auth.router import router as auth_router
 from tests.test_router import router as test_router
+from admin.router import router as admin_router
 
 settings = Settings()
 
@@ -56,6 +57,7 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(test_router)
+app.include_router(admin_router)
 
 
 @app.get("/")
