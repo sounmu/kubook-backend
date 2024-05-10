@@ -60,4 +60,4 @@ app.include_router(test_router)
 
 @app.get("/")
 async def root():
-    return {"message": "쿠책책 API 서버입니다."}
+    return {"message": "쿠책책 API 서버입니다!"}

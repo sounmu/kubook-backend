@@ -16,7 +16,7 @@ settings = Settings()
 
 @router.post(
     "/login",
-    response_model=auth_schemas.LoginResponse,
+    # response_model=auth_schemas.LoginResponse,
     status_code=status.HTTP_200_OK,
     summary="로그인",
     description="""

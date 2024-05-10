@@ -13,10 +13,9 @@ from auth.token_service import create_jwt
 async def login(request, db: Session):
     # Authenticate user
     # Check if user exists in Firebase
-    firebase_response = await sign_in_with_email_and_password(request.email, request.password)
     try:
-        localId = firebase_response["localId"]
-        return localId
+        firebase_response = await sign_in_with_email_and_password(request.email, request.password)
+        local_id = firebase_response["localId"]
     except KeyError:
         error_message = firebase_response["error"]["message"]
         if error_message == "INVALID_EMAIL":
@@ -27,7 +26,6 @@ async def login(request, db: Session):
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User disabled")
 
     # Check if user information exists in the DB
-    local_id = firebase_response
     user = db.query(User).filter(User.auth_id == local_id).first()
 
     # If user information does not exist in the DB, create a new user
