@@ -17,7 +17,7 @@ router = APIRouter(
     summary="data 완전 삭제",
     status_code=status.HTTP_200_OK
 )
-async def delete_data(index: int,db: Session = Depends(get_db), current_user=Depends(get_current_admin)):
+async def delete_data(index: int,db: Session = Depends(get_db), current_user=None):
     return delete_item_dba(m.BookInfo, index, current_user, db)
 
 # =================== 도서 정보 =========================
@@ -28,7 +28,7 @@ async def delete_data(index: int,db: Session = Depends(get_db), current_user=Dep
     response_model=List[s.BookInfo],
     status_code=status.HTTP_200_OK
 )
-async def get_list_book_info(db: Session = Depends(get_db), current_user=Depends(get_current_admin)):
+async def get_list_book_info(db: Session = Depends(get_db), current_user=None):
     return get_list(m.BookInfo, current_user, db)
 
 @router.get(
@@ -37,7 +37,7 @@ async def get_list_book_info(db: Session = Depends(get_db), current_user=Depends
     response_model=s.BookInfo,
     status_code=status.HTTP_200_OK
 )
-async def get_book_info(book_info_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_admin)):
+async def get_book_info(book_info_id: int, db: Session = Depends(get_db), current_user=None):
     return get_item(m.BookInfo, book_info_id, current_user, db)
 
 @router.post(
@@ -46,7 +46,7 @@ async def get_book_info(book_info_id: int, db: Session = Depends(get_db), curren
     response_model=s.BookInfo,
     status_code=status.HTTP_201_CREATED
 )
-async def create_book_info(book_info_data: s.BookInfoCreate, db: Session = Depends(get_db), current_user=Depends(get_current_admin)):
+async def create_book_info(book_info_data: s.BookInfoCreate, db: Session = Depends(get_db), current_user=None):
     return create_item(m.BookInfo, book_info_data, current_user, db)
 
 @router.patch(
@@ -55,7 +55,7 @@ async def create_book_info(book_info_data: s.BookInfoCreate, db: Session = Depen
     response_model=s.BookInfo,
     status_code=status.HTTP_200_OK
 )
-async def update_book_info(book_info_id: int, book_info_data: s.BookInfoUpdate, db: Session = Depends(get_db), current_user=Depends(get_current_admin)):
+async def update_book_info(book_info_id: int, book_info_data: s.BookInfoUpdate, db: Session = Depends(get_db), current_user=None):
     return update_item(m.BookInfo, book_info_data, book_info_id, current_user, db)
 
 @router.delete(
@@ -63,7 +63,7 @@ async def update_book_info(book_info_id: int, book_info_data: s.BookInfoUpdate, 
     summary="도서 정보 삭제",
     status_code=status.HTTP_204_NO_CONTENT
 )
-async def delete_book_info(book_info_id: int, db: Session = Depends(get_db), current_user=Depends(get_current_admin)):
+async def delete_book_info(book_info_id: int, db: Session = Depends(get_db), current_user=None):
     return delete_item(m.BookInfo, book_info_id, current_user, db)
 
 # =================== 책 정보 =========================
