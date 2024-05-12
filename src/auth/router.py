@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from config import Settings
-from dependencies import get_db
+from dependencies import get_db, get_current_user
 import auth.schemas as auth_schemas
 import auth.service as auth_service
 
@@ -13,10 +13,31 @@ router = APIRouter(
 
 settings = Settings()
 
+# 신규 사용자 등록
+
+
+@router.post(
+    "/register",
+    response_model=auth_schemas.RegisterResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="신규 사용자 등록",
+    description="""신규 사용자 등록
+    """,
+    response_description={
+        status.HTTP_201_CREATED: {"description": "User created"}
+    }
+)
+async def register(
+    request: auth_schemas.RegisterRequest,
+    current_user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    return await auth_service.register(current_user, request, db)
+
 
 @router.post(
     "/login",
-    # response_model=auth_schemas.LoginResponse,
+    response_model=auth_schemas.LoginResponse,
     status_code=status.HTTP_200_OK,
     summary="로그인",
     description="""
@@ -40,12 +61,3 @@ async def login(
     db: Session = Depends(get_db)
 ):
     return await auth_service.login(request, db)
-
-
-@router.post(
-    "/register",
-    summary="회원 가입",
-    deprecated=True
-)
-async def signup(db: Session = Depends(get_db)):
-    pass
