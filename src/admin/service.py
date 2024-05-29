@@ -7,7 +7,7 @@ from models import *
 from typing import Dict, Any
 
 # Get the list of items
-def get_list(model, current_user, db: Session):
+def get_list(model, db: Session):
     stmt = select(model).where((model.is_valid == True)).order_by(model.updated_at)
     try:
         result = db.scalars(stmt).all()
@@ -20,7 +20,7 @@ def get_list(model, current_user, db: Session):
 
 
 # Get the item by ID
-def get_item(model, index: int, current_user, db: Session):
+def get_item(model, index: int, db: Session):
     stmt = select(model).where((model.id == index) and (model.is_valid == True))
     try:
         result = db.execute(stmt).scalar_one()
@@ -35,7 +35,7 @@ def get_item(model, index: int, current_user, db: Session):
 
 
 # CREATE
-def create_item(model, req_data, current_user, db:Session):
+def create_item(model, req_data, db:Session):    
     item = model(**req_data.dict())
 
     try:
@@ -56,8 +56,8 @@ def create_item(model, req_data, current_user, db:Session):
         return item
 
 # update
-def update_item(model, req_data, index:int, current_user, db:Session):
-    item = get_item(model, index, current_user, db)
+def update_item(model, index:int, req_data, db:Session):
+    item = get_item(model, index, db)
 
     try:
         current_item = item.__dict__
@@ -88,8 +88,8 @@ def update_item(model, req_data, index:int, current_user, db:Session):
 
 
 # delete
-def delete_item(model, index:int, current_user, db:Session):
-    item = get_item(model, index, current_user, db)
+def delete_item(model, index:int, db:Session):
+    item = get_item(model, index, db)
     stmt = (update(model).where(model.id == index).values(is_valid=False))
     try:
         db.execute(stmt)
@@ -103,8 +103,8 @@ def delete_item(model, index:int, current_user, db:Session):
         db.commit()
     
 # delete for dba
-def delete_item_dba(model, index:int, current_user, db:Session):
-    item = get_item(model, index, current_user, db)
+def delete_item_dba(model, index:int, db:Session):
+    item = get_item(model, index, db)
     stmt = (delete(model).where(model.id==index))
     try:
         db.execute(stmt)
