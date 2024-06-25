@@ -61,15 +61,19 @@ def update_item(model, index:int, req_data, db:Session):
 
     try:
         current_item = item.__dict__
-        new_item = req_data.dict()
-        
-        for key in new_item:
-            if key in current_item:
-                if isinstance(new_item[key], type(current_item[key])):
-                    setattr(item, key, new_item[key])
+        if type(req_data) != dict :
+            new_item = req_data.dict()
+        else: new_item = req_data
+
+        for key, value in new_item.items():
+            if value is not None and key in current_item:
+                if isinstance(value, type(current_item[key])):
+                    setattr(item, key, value)
                 else:
-                    raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                                        detail=f"Invalid value type for column {key}.")
+                    raise HTTPException(
+                        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                        detail=f"Invalid value type for column {key}. Expected {type(current_item[key])}, got {type(value)}."
+                )
         db.add(item)
         db.flush()
 
@@ -119,12 +123,14 @@ def delete_item_dba(model, index:int, db:Session):
 # column 이름과 value 값을 이용하여 filtering
 
 def get_item_by_column(*, model, columns: Dict[str, Any], db: Session):
-    query = db.query(model)
+    stmt = select(model)
+    
     for column_name, value in columns.items():
-        if value:
-            if column_name in model.__table__.columns:
-                if isinstance(value, type(getattr(model, column_name))):
-                    query = query.filter(getattr(model, column_name) == value)
-                else:
-                    return None
-    return query.all()
+        if value is not None:
+            if hasattr(model, column_name):
+                stmt = stmt.where(getattr(model, column_name) == value)
+            else:
+                return None
+    
+    result = db.scalars(stmt).all()
+    return result
