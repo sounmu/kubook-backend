@@ -53,7 +53,7 @@ class Admin(Base):
     expiration_date = Column(Date, nullable=False)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
-    is_valid = Column(Boolean, nullable=False, default=False)
+    is_valid = Column(Boolean, nullable=False, default=True)
 
     user = relationship("User", back_populates="admin")
     notices = relationship("Notice", back_populates="admin")
@@ -136,7 +136,7 @@ class Book(Base):
     donor_name = Column(String(255), default=None)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
-    is_valid = Column(Boolean, nullable=False, default=False)
+    is_valid = Column(Boolean, nullable=False, default=True)
 
     book_info = relationship("BookInfo", back_populates="books")
     reservations = relationship("Reservation", back_populates="book")

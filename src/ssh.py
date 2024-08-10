@@ -1,4 +1,4 @@
-from sshtunnel import SSHTunnelForwarder
+from sshtunnel import SSHTunnelForwarder, BaseSSHTunnelForwarderError 
 from config import Settings
 
 settings = Settings()
@@ -44,6 +44,9 @@ class SSHConnection:
                 remote_bind_address=self.remote_bind_address,
                 local_bind_address=self.local_bind_address,
             )
+        except BaseSSHTunnelForwarderError as e:
+            print(f"Error connecting to SSH: {e}")
+            exit(1)
         except Exception as e:
             print(f"Error connecting to SSH: {e}")
             exit(1)
