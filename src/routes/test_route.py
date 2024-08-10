@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel, ConfigDict
 
 from dependencies import get_db, get_current_user, get_current_admin
-from models import LibrarySetting, BookStat, BookInfo
+from repositories.models import LibrarySetting, BookStat, BookInfo
 
 router = APIRouter(
     prefix="/test",
