@@ -1,4 +1,5 @@
-from sqlalchemy import Boolean, Column, DateTime, Integer, SmallInteger, String
+from sqlalchemy import (TIMESTAMP, Boolean, Column, Integer, SmallInteger,
+                        String)
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
@@ -20,8 +21,8 @@ class BookInfo(Base):
     version = Column(String(45), nullable=True)
     major = Column(Boolean, nullable=True, default=False)
     language = Column(String(20), nullable=False, default="KOREAN")
-    created_at = Column(DateTime, nullable=False, server_default=func.now())
-    updated_at = Column(DateTime, nullable=False, server_default=func.now(), onupdate=func.now())
+    created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
+    updated_at = Column(TIMESTAMP, nullable=False, server_default=func.now(), onupdate=func.now())
     is_deleted = Column(Boolean, nullable=False, default=False)
 
     books = relationship("Book", back_populates="book_info")

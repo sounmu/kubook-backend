@@ -1,4 +1,4 @@
-from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer,
+from sqlalchemy import (TIMESTAMP, Boolean, Column, ForeignKey, Integer,
                         SmallInteger, String, Text)
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -16,11 +16,11 @@ class RequestedBook(Base):
     reject_reason = Column(String(20), nullable=True)
     request_link = Column(String(255), nullable=False)
     reason = Column(Text, nullable=False)
-    requested_at = Column(DateTime, nullable=False)
+    requested_at = Column(TIMESTAMP, nullable=False)
     processing_status = Column(String(20), nullable=False)
-    processed_at = Column(DateTime, nullable=True)
-    created_at = Column(DateTime, nullable=False, server_default=func.now())
-    updated_at = Column(DateTime, nullable=False, server_default=func.now(), onupdate=func.now())
+    processed_at = Column(TIMESTAMP, nullable=True)
+    created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
+    updated_at = Column(TIMESTAMP, nullable=False, server_default=func.now(), onupdate=func.now())
     is_deleted = Column(Boolean, nullable=False, default=False)
 
     user = relationship("User", back_populates="requested_books")
