@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta, timezone
 
-from config import Settings
 from jose import jwt
+
+from src.config import Settings
 
 
 def create_jwt(

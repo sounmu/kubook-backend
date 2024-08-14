@@ -1,4 +1,5 @@
-from sqlalchemy import TIMESTAMP, Boolean, Column, Integer, String, BigInteger, BIGINT
+from sqlalchemy import (BIGINT, TIMESTAMP, BigInteger, Boolean, Column,
+                        Integer, String)
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
