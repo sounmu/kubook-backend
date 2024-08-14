@@ -36,8 +36,7 @@ app = FastAPI(
     license_info={
         "name": "MIT",
         "url": "https://opensource.org/licenses/MIT"
-    },
-    lifespan=lifespan
+    }
 )
 
 # CORS
@@ -55,23 +54,23 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-app.include(admin_book_request_router)
-app.include(admin_book_router)
-app.include(admin_loans_router)
-app.include(admin_notice_router)
-app.include(admin_reservation_router)
-app.include(admin_router)
-app.include(admin_setting_router)
-app.include(admin_user_router)
+app.include_router(admin_book_request_router)
+app.include_router(admin_book_router)
+app.include_router(admin_loans_router)
+app.include_router(admin_notice_router)
+app.include_router(admin_reservation_router)
+app.include_router(admin_router)
+app.include_router(admin_setting_router)
+app.include_router(admin_user_router)
 
-app.include(auth_router)
-app.include(book_request_router)
-app.include(book_router)
-app.include(loan_router)
-app.include(reservation_router)
-app.include(review_router)
-app.include(test_router)
-app.include(user_router)
+app.include_router(auth_router)
+app.include_router(book_request_router)
+app.include_router(book_router)
+app.include_router(loan_router)
+app.include_router(reservation_router)
+app.include_router(review_router)
+app.include_router(test_router)
+app.include_router(user_router)
 
 
 @app.get("/")
