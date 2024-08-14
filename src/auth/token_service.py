@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta, timezone
 from jose import jwt
 
+from config import Settings
+
 
 def create_jwt(
     data: dict,
@@ -33,7 +35,7 @@ def create_jwt(
 # 내일 할 일: dependencies 전부, database,
 
 
-def create_user_tokens(user_id: int, secret_key: str) -> dict:
+def create_user_tokens(user_id: int) -> dict:
     """
     Create JWT access and refresh tokens for the user.
 
@@ -45,27 +47,25 @@ def create_user_tokens(user_id: int, secret_key: str) -> dict:
         dict: A dictionary containing the access and refresh tokens.
     """
     # Create Access Token
-    access_token_expires = timedelta(minutes=15)
+    access_token_expires = timedelta(minutes=Settings().JWT_ACCESS_EXPIRATION_TIME_MINUTES)
     access_token = create_jwt(
-        data={"sub": user_id},
-        secret_key=secret_key,
-        algorithm="HS256",
+        data={"sub": str(user_id)},
+        secret_key=Settings().JWT_SECRET_KEY,
+        algorithm=Settings().JWT_ALGORITHM,
         expires_delta=access_token_expires
     )
 
     # Create Refresh Token
-    refresh_token_expires = timedelta(days=30)
+    refresh_token_expires = timedelta(minutes=Settings().JWT_REFRESH_EXPIRATION_TIME_MINUTES)
     refresh_token = create_jwt(
-        data={"sub": user_id},
-        secret_key=secret_key,
-        algorithm="HS256",
+        data={"sub": str(user_id)},
+        secret_key=Settings().JWT_SECRET_KEY,
+        algorithm=Settings().JWT_ALGORITHM,
         expires_delta=refresh_token_expires
     )
 
     return {
-        "token": {
-            "access_token": access_token,
-            "refresh_token": refresh_token,
-            "token_type": "bearer"
-        }
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer"
     }

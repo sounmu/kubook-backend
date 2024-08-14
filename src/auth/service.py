@@ -7,71 +7,77 @@ from fastapi import HTTPException, status
 from config import Settings
 from models import User
 from auth.firebase import sign_in_with_email_and_password
-from auth.token_service import create_jwt
+from auth.token_service import create_user_tokens
+
+
+async def register(current_user, request, db: Session):
+
+    user_id = current_user.id
+
+    # Check if user information exists in the DB
+    user = db.query(User).filter(User.id == user_id).first()
+
+    # If user name is TEMP_USER_NAME(not registered), update user name, else reutrn error(already registered)
+    if user.user_name == Settings().TEMP_USER_NAME:
+        user.user_name = request.user_name
+        user.is_active = request.is_active
+        db.commit()
+        db.refresh(user)
+    else:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User already exists")
+
+    # Create JWT tokens
+    token_response = create_user_tokens(user.id)
+
+    return {
+        "token": token_response,
+        "user": {
+            "id": user.id,
+            "user_name": user.user_name,
+            "is_active": user.is_active,
+            "email": user.email
+        }
+    }
 
 
 async def login(request, db: Session):
     # Authenticate user
     # Check if user exists in Firebase
+
     firebase_response = await sign_in_with_email_and_password(request.email, request.password)
-    try:
-        localId = firebase_response["localId"]
-        return localId
-    except KeyError:
-        error_message = firebase_response["error"]["message"]
-        if error_message == "INVALID_EMAIL":
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-        elif error_message == "INVALID_PASSWORD":
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid password")
-        elif error_message == "USER_DISABLED":
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User disabled")
+    local_id = firebase_response["localId"]
 
     # Check if user information exists in the DB
-    local_id = firebase_response
     user = db.query(User).filter(User.auth_id == local_id).first()
 
     # If user information does not exist in the DB, create a new user
+    user_info_required = False
     if user is None:
         user = User(
             auth_id=local_id,
-            user_name="권민재",
+            user_name=Settings().TEMP_USER_NAME,
             email=request.email
         )
         db.add(user)
         db.commit()
         db.refresh(user)
+        user_info_required = True
 
+    # Create JWT tokens
+    token_response = create_user_tokens(user.id)
 
-# TODO: create jwt token을 token_service.py에 옮기고, 간략화할 것
-# TODO: 회원가입 API 작성하기
-
-    # Create JWT token
-    # Create Access Token
-    access_token_expires = timedelta(minutes=Settings().JWT_ACCESS_EXPIRATION_TIME_MINUTES)
-    access_token = create_jwt(
-        data={"sub": user.id},
-        secret_key=Settings().JWT_SECRET_KEY,
-        algorithm=Settings().JWT_ALGORITHM,
-        expires_delta=access_token_expires
-    )
-
-    # Create Refresh Token
-    refresh_token_expires = timedelta(minutes=Settings().JWT_REFRESH_EXPIRATION_TIME_MINUTES)
-    refresh_token = create_jwt(
-        data={"sub": user.id},
-        secret_key=Settings().JWT_SECRET_KEY,
-        algorithm=Settings().JWT_ALGORITHM,
-        expires_delta=refresh_token_expires
-    )
-
-    return {
-        "token": {
-            "access_token": access_token,
-            "refresh_token": refresh_token,
-            "token_type": "bearer"
-        },
-        "user": {
-            "id": user.id,
-            "user_name": user.user_name
+    if user_info_required:
+        return {
+            "token": token_response,
+            "user_info_required": True
         }
-    }
+    else:
+        return {
+            "token": token_response,
+            "user": {
+                "id": user.id,
+                "user_name": user.user_name,
+                "is_active": user.is_active,
+                "email": user.email
+            }
+        }

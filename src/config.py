@@ -49,6 +49,9 @@ class Settings(BaseSettings):
     FIREBASE_SERVICE_ACCOUNT_KEY: str = os.getenv("FIREBASE_SERVICE_ACCOUNT_KEY", "firebase-service-account-key.json")
     FIREBASE_WEB_API_KEY: str = os.getenv("FIREBASE_WEB_API_KEY", "firebase-web-api-key")
 
+    # 임시 사용자 이름
+    TEMP_USER_NAME: str = os.getenv("TEMP_USER_NAME", "임시 사용자")
+
     # 데이터베이스 설정 - 민재 개발 환경
     MJ_DB_HOST: str = os.getenv("MJ_DB_HOST", "localhost")
     MJ_DB_PORT: int = int(os.getenv("MJ_DB_PORT", 3306))
