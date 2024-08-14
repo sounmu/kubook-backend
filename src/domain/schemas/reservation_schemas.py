@@ -1,6 +1,9 @@
-from datetime import datetime as _datetime, date
-from pydantic import Field
+from datetime import date
+from datetime import datetime as _datetime
+
 from common import CustomBaseModel
+from pydantic import Field
+
 
 class ReservationBase(CustomBaseModel):
     book_id: int = Field(..., title="book_id", description="예약한 책 ID", example=1, ge=0)

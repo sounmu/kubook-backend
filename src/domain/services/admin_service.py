@@ -1,10 +1,12 @@
-from sqlalchemy.exc import IntegrityError, NoResultFound
-from sqlalchemy import select, update, delete
-from fastapi import status, HTTPException
-from sqlalchemy.orm import Session
+from typing import Any, Dict
+
 from admin.schemas import *
+from fastapi import HTTPException, status
 from models import *
-from typing import Dict, Any
+from sqlalchemy import delete, select, update
+from sqlalchemy.exc import IntegrityError, NoResultFound
+from sqlalchemy.orm import Session
+
 
 # Get the list of items
 def get_list(model, db: Session):

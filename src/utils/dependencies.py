@@ -1,12 +1,11 @@
 from datetime import date
 
-from fastapi import Header, Depends, HTTPException, status
-from jose import JWTError, jwt
-from sqlalchemy.orm import Session
-
-from database import get_db_session
 from config import Settings
+from database import get_db_session
+from fastapi import Depends, Header, HTTPException, status
+from jose import JWTError, jwt
 from models import User
+from sqlalchemy.orm import Session
 
 
 def get_db():

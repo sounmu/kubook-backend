@@ -1,7 +1,10 @@
-from .base import Base
-from sqlalchemy import Boolean, Column, Integer, String, Date, DateTime, Text, ForeignKey
-from sqlalchemy.sql import func
+from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer,
+                        SmallInteger, String, Text)
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
+
+from .base import Base
+
 
 class RequestedBook(Base):
     __tablename__ = "requested_book"
@@ -9,14 +12,15 @@ class RequestedBook(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
     book_title = Column(String(255), nullable=False)
-    publication_year = Column(Integer)
-    reject_reason = Column(Text, nullable=True)
-    request_link = Column(String(100), nullable=False)
+    publication_year = Column(SmallInteger, nullable=True)
+    reject_reason = Column(String(20), nullable=True)
+    request_link = Column(String(255), nullable=False)
     reason = Column(Text, nullable=False)
-    processing_status = Column(Integer, nullable=False, default=0)
-    request_date = Column(Date, nullable=False)
-    created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
-    updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
-    is_deleted = Column(Boolean, nullable=False, default=True)
+    requested_at = Column(DateTime, nullable=False)
+    processing_status = Column(String(20), nullable=False)
+    processed_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, nullable=False, server_default=func.now())
+    updated_at = Column(DateTime, nullable=False, server_default=func.now(), onupdate=func.now())
+    is_deleted = Column(Boolean, nullable=False, default=False)
 
     user = relationship("User", back_populates="requested_books")

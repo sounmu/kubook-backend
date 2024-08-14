@@ -1,22 +1,25 @@
-from .base import Base
-from sqlalchemy import Boolean, Column, Integer, String, DateTime
-from sqlalchemy.sql import func
+from sqlalchemy import TIMESTAMP, Boolean, Column, Integer, String, BigInteger, BIGINT
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
+
+from .base import Base
+
 
 class User(Base):
     __tablename__ = "user"
 
     id = Column(Integer, primary_key=True, index=True)
-    auth_id = Column(String(50), unique=True, nullable=False)
-    user_name = Column(String(45), nullable=True)
-    is_active = Column(Boolean, nullable=False, default=True)
-    email = Column(String(100), unique=True, nullable=False)
-    created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
-    updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
-    is_deleted = Column(Boolean, nullable=False, default=True)
+    auth_id = Column(String(255), nullable=False)
+    auth_type = Column(String(20), nullable=False, default="FIREBASE")
+    email = Column(String(100), nullable=False)
+    user_name = Column(String(45), nullable=False)
+    is_active = Column(String(20), nullable=False)
+    created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
+    updated_at = Column(TIMESTAMP, nullable=False, server_default=func.now(), onupdate=func.now())
+    is_deleted = Column(Boolean, nullable=False, default=False)
 
+    admin = relationship("Admin", back_populates="user")
     requested_books = relationship("RequestedBook", back_populates="user")
-    admin = relationship("Admin", uselist=False, back_populates="user")
-    book_reviews = relationship("BookReview", back_populates="user")
-    reservations = relationship("Reservation", back_populates="user")
     loans = relationship("Loan", back_populates="user")
+    book_reviews = relationship("BookReview", back_populates="user")
+    notices = relationship("Notice", back_populates="user")

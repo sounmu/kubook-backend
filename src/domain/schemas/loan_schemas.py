@@ -1,7 +1,11 @@
+from datetime import date
+from datetime import datetime as _datetime
+from datetime import timedelta
 from typing import Optional
-from datetime import datetime as _datetime, date, timedelta
-from pydantic import Field
+
 from common import CustomBaseModel
+from pydantic import Field
+
 
 class LoanBase(CustomBaseModel):
     book_id: int = Field(..., title="book_id", description="대출한 책 ID", example=1, ge=0)

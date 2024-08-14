@@ -1,27 +1,28 @@
-from .base import Base
-from sqlalchemy import Boolean, Column, Integer, String, DateTime, ForeignKey
-from sqlalchemy.sql import func
+from sqlalchemy import Boolean, Column, DateTime, Integer, SmallInteger, String
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
+
+from .base import Base
+
 
 class BookInfo(Base):
     __tablename__ = "book_info"
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(255), nullable=False)
-    subtitle = Column(String(255))
+    code = Column(String(20), nullable=False)
+    category_name = Column(String(50), nullable=False)
+    subtitle = Column(String(255), nullable=True)
     author = Column(String(100), nullable=False)
     publisher = Column(String(45), nullable=False)
-    publication_year = Column(Integer, nullable=False)
-    image_url = Column(String(255))
-    category_id = Column(Integer, ForeignKey("book_category.id"), nullable=False)
-    version = Column(String(45))
-    major = Column(Boolean, default=False)
-    language = Column(Boolean, nullable=False, default=True)
-    created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
-    updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
-    is_deleted = Column(Boolean, nullable=False, default=True)
+    publication_year = Column(SmallInteger, nullable=False)
+    image_url = Column(String(255), nullable=True)
+    version = Column(String(45), nullable=True)
+    major = Column(Boolean, nullable=True, default=False)
+    language = Column(String(20), nullable=False, default="KOREAN")
+    created_at = Column(DateTime, nullable=False, server_default=func.now())
+    updated_at = Column(DateTime, nullable=False, server_default=func.now(), onupdate=func.now())
+    is_deleted = Column(Boolean, nullable=False, default=False)
 
-    category = relationship("BookCategory", back_populates="books")
-    book_stat = relationship("BookStat", back_populates="book_info")
-    book_reviews = relationship("BookReview", back_populates="book_info")
     books = relationship("Book", back_populates="book_info")
+    book_reviews = relationship("BookReview", back_populates="book_info")

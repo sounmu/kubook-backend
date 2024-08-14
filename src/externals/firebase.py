@@ -7,12 +7,11 @@
 import argparse
 import json
 import os
-import requests
 import pprint
 
-from fastapi import HTTPException, status
-
+import requests
 from config import Settings
+from fastapi import HTTPException, status
 
 FIREBASE_WEB_API_KEY = Settings().FIREBASE_WEB_API_KEY
 rest_api_url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword"

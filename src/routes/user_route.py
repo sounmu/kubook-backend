@@ -1,7 +1,6 @@
+from dependencies import get_current_active_user, get_db
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-
-from dependencies import get_db, get_current_active_user
 
 router = APIRouter(
     prefix="/users",

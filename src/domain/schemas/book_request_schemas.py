@@ -1,7 +1,10 @@
+from datetime import date
+from datetime import datetime as _datetime
 from typing import Optional
-from datetime import datetime as _datetime, date
-from pydantic import Field
+
 from common import CustomBaseModel
+from pydantic import Field
+
 
 class BookRequestBase(CustomBaseModel):
     book_title: str = Field(..., title="book_title", description="책 제목", example="FastAPI Tutorial")

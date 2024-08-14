@@ -1,4 +1,4 @@
-FROM python:3.9
+FROM python:3.10
 
 # 작업 디렉토리를 /app/src로 설정
 WORKDIR /app/src

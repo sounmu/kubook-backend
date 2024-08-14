@@ -1,13 +1,11 @@
 from datetime import timedelta
 
-
-from sqlalchemy.orm import Session
-from fastapi import HTTPException, status
-
-from config import Settings
-from models import User
 from auth.firebase import sign_in_with_email_and_password
 from auth.token_service import create_user_tokens
+from config import Settings
+from fastapi import HTTPException, status
+from models import User
+from sqlalchemy.orm import Session
 
 
 async def register(current_user, request, db: Session):

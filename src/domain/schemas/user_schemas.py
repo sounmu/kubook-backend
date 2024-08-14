@@ -1,6 +1,8 @@
 from datetime import datetime as _datetime
-from pydantic import Field
+
 from common import CustomBaseModel
+from pydantic import Field
+
 
 class UserBase(CustomBaseModel):
     user_name: str = Field(..., title="user_name", description="사용자 이름", example="JohnDoe")

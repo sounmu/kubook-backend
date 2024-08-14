@@ -1,7 +1,8 @@
-from .base import Base
-from sqlalchemy import Boolean, Column, Integer, String, DateTime, ForeignKey
-from sqlalchemy.sql import func
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
+
+from .base import Base
 
 
 class Book(Base):
@@ -9,13 +10,13 @@ class Book(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     book_info_id = Column(Integer, ForeignKey("book_info.id"), nullable=False)
-    book_status = Column(Integer, nullable=False, default=0)
-    note = Column(String(255), default=None)
-    donor_name = Column(String(255), default=None)
-    created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
-    updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
-    is_deleted = Column(Boolean, nullable=False, default=True)
+    book_status = Column(String(20), nullable=False)
+    note = Column(String(255), nullable=True)
+    donor_name = Column(String(255), nullable=True)
+    created_at = Column(DateTime, nullable=False, server_default=func.now())
+    updated_at = Column(DateTime, nullable=False,
+                        server_default=func.now(), onupdate=func.now())
+    is_deleted = Column(Boolean, nullable=False, default=False)
 
     book_info = relationship("BookInfo", back_populates="books")
-    reservations = relationship("Reservation", back_populates="book")
     loans = relationship("Loan", back_populates="book")

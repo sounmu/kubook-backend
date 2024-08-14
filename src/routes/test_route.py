@@ -1,12 +1,12 @@
-from typing import List
 from datetime import datetime
+from typing import List
 
+from dependencies import get_current_admin, get_current_user, get_db
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
 from pydantic import BaseModel, ConfigDict
+from sqlalchemy.orm import Session
 
-from dependencies import get_db, get_current_user, get_current_admin
-from repositories.models import LibrarySetting, BookStat, BookInfo
+from repositories.models import BookInfo, BookStat, LibrarySetting
 
 router = APIRouter(
     prefix="/test",
