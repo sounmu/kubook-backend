@@ -1,7 +1,7 @@
 from .base import Base
-from sqlalchemy import Boolean, Column, Integer, String, DateTime
+from sqlalchemy import Boolean, Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.sql import func
-
+from sqlalchemy.orm import relationship
 
 class BookInfo(Base):
     __tablename__ = "book_info"
@@ -19,7 +19,7 @@ class BookInfo(Base):
     language = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
-    is_valid = Column(Boolean, nullable=False, default=True)
+    is_deleted = Column(Boolean, nullable=False, default=True)
 
     category = relationship("BookCategory", back_populates="books")
     book_stat = relationship("BookStat", back_populates="book_info")

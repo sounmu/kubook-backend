@@ -1,6 +1,7 @@
 from .base import Base
-from sqlalchemy import Boolean, Column, Integer, String, DateTime
+from sqlalchemy import Boolean, Column, Integer, Date, DateTime, ForeignKey
 from sqlalchemy.sql import func
+from sqlalchemy.orm import relationship
 
 
 class Loan(Base):
@@ -17,7 +18,7 @@ class Loan(Base):
     overdue_days = Column(Integer, nullable=False, default=0)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
-    is_valid = Column(Boolean, nullable=False, default=True)
+    is_deleted = Column(Boolean, nullable=False, default=True)
 
     book = relationship("Book", back_populates="loans")
     user = relationship("User", back_populates="loans")

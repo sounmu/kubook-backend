@@ -1,7 +1,7 @@
 from .base import Base
-from sqlalchemy import Boolean, Column, Integer, String, DateTime
+from sqlalchemy import Boolean, Column, Integer, String, Date, DateTime, Text, ForeignKey
 from sqlalchemy.sql import func
-
+from sqlalchemy.orm import relationship
 
 class RequestedBook(Base):
     __tablename__ = "requested_book"
@@ -17,6 +17,6 @@ class RequestedBook(Base):
     request_date = Column(Date, nullable=False)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
-    is_valid = Column(Boolean, nullable=False, default=True)
+    is_deleted = Column(Boolean, nullable=False, default=True)
 
     user = relationship("User", back_populates="requested_books")

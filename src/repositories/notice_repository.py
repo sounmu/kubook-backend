@@ -1,7 +1,7 @@
 from .base import Base
-from sqlalchemy import Boolean, Column, Integer, String, DateTime
+from sqlalchemy import Boolean, Column, Integer, String, Text, DateTime, ForeignKey
 from sqlalchemy.sql import func
-
+from sqlalchemy.orm import relationship
 
 class Notice(Base):
     __tablename__ = "notice"
@@ -13,6 +13,6 @@ class Notice(Base):
     notice_content = Column(Text, nullable=False)
     created_at = Column(DateTime, nullable=False, default=func.current_timestamp())
     updated_at = Column(DateTime, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
-    is_valid = Column(Boolean, nullable=False, default=True)
+    is_deleted = Column(Boolean, nullable=False, default=True)
 
     admin = relationship("Admin", back_populates="notices")
