@@ -4,9 +4,9 @@ from fastapi import Depends, Header, HTTPException, status
 from jose import jwt
 from sqlalchemy.orm import Session
 
+from config import Settings
 from database import get_db_session
 from repositories.user_repository import User
-from config import Settings
 
 
 def get_db():

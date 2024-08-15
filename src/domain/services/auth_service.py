@@ -1,11 +1,11 @@
 from datetime import timedelta
 
-from externals.firebase import sign_in_with_email_and_password
-from domain.services.token_service import create_user_tokens
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from config import Settings
+from domain.services.token_service import create_user_tokens
+from externals.firebase import sign_in_with_email_and_password
 from repositories.user_repository import User
 
 
