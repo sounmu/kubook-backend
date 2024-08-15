@@ -79,17 +79,6 @@ CREATE TABLE `user` (
           `is_deleted` BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-CREATE TABLE `reservation` (
-          `id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-          `book_id` BIGINT NOT NULL,
-          `user_id` BIGINT NOT NULL,
-          `reservation_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-          `reservation_status` VARCHAR(20) NOT NULL,
-          `created_at` TIMESTAMP NOT NULL DEFAULT NOW(),
-          `updated_at` TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
-          `is_deleted` BOOLEAN NOT NULL DEFAULT FALSE
-);
-
 CREATE TABLE `book` (
           `id` BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
           `book_info_id` BIGINT NOT NULL,

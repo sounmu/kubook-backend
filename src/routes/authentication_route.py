@@ -1,8 +1,8 @@
-import auth.schemas as auth_schemas
-import auth.service as auth_service
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
+import domain.schemas.auth_schemas as auth_schemas
+import domain.services.auth_service as auth_service
 from config import Settings
 from dependencies import get_current_user, get_db
 

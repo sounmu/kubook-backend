@@ -1,18 +1,19 @@
 from typing import List
 
-import admin.schemas as s
-import models as m
-from admin.service import *
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
+import domain.schemas.admin_schemas as s
 from dependencies import get_current_admin, get_db
+from domain.services.admin_service import *
+from repositories.notice_repository import Notice
 
 router = APIRouter(
     prefix="/admin/notices",
     tags=["admin/notices"],
     dependencies=[Depends(get_current_admin)]
 )
+
 
 @router.get(
     "/",
@@ -21,7 +22,8 @@ router = APIRouter(
     status_code=status.HTTP_200_OK
 )
 async def get_list_notices(db: Session = Depends(get_db)):
-    return get_list(m.Notice, db)
+    return get_list(Notice, db)
+
 
 @router.get(
     "/{notice_id}",
@@ -30,7 +32,8 @@ async def get_list_notices(db: Session = Depends(get_db)):
     status_code=status.HTTP_200_OK
 )
 async def get_notice(notice_id: int, db: Session = Depends(get_db)):
-    return get_item(m.Notice, notice_id, db)
+    return get_item(Notice, notice_id, db)
+
 
 @router.post(
     "/",
@@ -38,9 +41,10 @@ async def get_notice(notice_id: int, db: Session = Depends(get_db)):
     response_model=s.Notice,
     status_code=status.HTTP_201_CREATED
 )
-async def create_notice(notice_data: NoticeCreate, current_user: m.User = Depends(get_current_admin), db: Session = Depends(get_db)):
+async def create_notice(notice_data: NoticeCreate, current_user: User = Depends(get_current_admin), db: Session = Depends(get_db)):
     notice_data.admin_id = current_user.admin.id
-    return create_item(m.Notice, notice_data, db)
+    return create_item(Notice, notice_data, db)
+
 
 @router.patch(
     "/{notice_id}",
@@ -48,9 +52,10 @@ async def create_notice(notice_data: NoticeCreate, current_user: m.User = Depend
     response_model=s.Notice,
     status_code=status.HTTP_200_OK
 )
-async def update_notice(notice_id: int, notice_data: NoticeUpdate, current_user: m.User = Depends(get_current_admin), db: Session = Depends(get_db)):
+async def update_notice(notice_id: int, notice_data: NoticeUpdate, current_user: User = Depends(get_current_admin), db: Session = Depends(get_db)):
     notice_data.admin_id = current_user.admin.id
-    return update_item(m.Notice, notice_id, notice_data, db)
+    return update_item(Notice, notice_id, notice_data, db)
+
 
 @router.delete(
     "/{notice_id}",
@@ -58,4 +63,4 @@ async def update_notice(notice_id: int, notice_data: NoticeUpdate, current_user:
     status_code=status.HTTP_204_NO_CONTENT
 )
 async def delete_notice(notice_id: int, db: Session = Depends(get_db)):
-    return delete_item(m.Notice, notice_id, db)
+    return delete_item(Notice, notice_id, db)

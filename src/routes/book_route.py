@@ -1,10 +1,11 @@
 from typing import List
 
-from books.schemas import BookCreate, BookSearchResult
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from dependencies import get_current_active_user, get_db
+from dependencies import get_db
+
+# from domain.schemas.book_schemas import BookSearchResult
 
 router = APIRouter(
     prefix="/books",
@@ -14,7 +15,7 @@ router = APIRouter(
 
 @router.get(
     "/search",
-    response_model=List[BookSearchResult],
+    # response_model=List[BookSearchResult],
     summary="도서 검색",
     description="""
     - 도서 제목, 저자, ISBN으로 검색
