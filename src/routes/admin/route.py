@@ -47,14 +47,14 @@ async def create_admin(admin_data: s.AdminCreate, db: Session = Depends(get_db))
     return create_item(Admin, admin_data, db)
 
 
-@router.patch(
-    "/info/{admin_id}",
-    summary="관리자 정보 수정",
-    response_model=s.Admin,
-    status_code=status.HTTP_200_OK
-)
-async def update_admin(admin_id: int, admin_data: s.AdminUpdate, db: Session = Depends(get_db)):
-    return update_item(Admin, admin_id, admin_data, db)
+# @router.patch(
+#     "/info/{admin_id}",
+#     summary="관리자 정보 수정",
+#     response_model=s.Admin,
+#     status_code=status.HTTP_200_OK
+# )
+# async def update_admin(admin_id: int, admin_data: s.AdminUpdate, db: Session = Depends(get_db)):
+#     return update_item(Admin, admin_id, admin_data, db)
 
 
 @router.delete(

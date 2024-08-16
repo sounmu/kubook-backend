@@ -3,12 +3,10 @@ from datetime import datetime as _datetime
 from datetime import timedelta
 from typing import Optional
 
-from pydantic import Field
-
-from utils.common import CustomBaseModel
+from pydantic import BaseModel, Field
 
 
-class LoanBase(CustomBaseModel):
+class LoanBase(BaseModel):
     book_id: int = Field(..., title="book_id", description="대출한 책 ID", example=1, ge=0)
     user_id: int = Field(..., title="user_id", description="대출한 사용자 ID", example=1, ge=0)
 

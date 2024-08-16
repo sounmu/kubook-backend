@@ -15,12 +15,12 @@ from routes.admin.user_route import router as admin_user_router
 from routes.authentication_route import router as auth_router
 from routes.book_request_route import router as book_request_router
 from routes.book_route import router as book_router
+from routes.food_route import router as food_router
 from routes.loan_route import router as loan_router
 from routes.reservation_route import router as reservation_router
 from routes.review_route import router as review_router
 from routes.test_route import router as test_router
 from routes.user_route import router as user_router
-from routes.food_route import router as food_router
 
 settings = Settings()
 

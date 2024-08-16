@@ -36,15 +36,15 @@ async def get_user(user_id: int,  db: Session = Depends(get_db)):
     return get_item(User, user_id, db)
 
 
-@router.patch(
-    "/{user_id}",
-    summary="사용자 정보 수정",
-    description="이름, 활동상태, 이메일 정보 수정 시 사용",
-    response_model=s.UserRes,
-    status_code=status.HTTP_200_OK
-)
-async def update_user(user_id: int, user: s.UserUpdate,  db: Session = Depends(get_db)):
-    return update_item(User, user_id, user, db)
+# @router.patch(
+#     "/{user_id}",
+#     summary="사용자 정보 수정",
+#     description="이름, 활동상태, 이메일 정보 수정 시 사용",
+#     response_model=s.UserRes,
+#     status_code=status.HTTP_200_OK
+# )
+# async def update_user(user_id: int, user: s.UserUpdate,  db: Session = Depends(get_db)):
+#     return update_item(User, user_id, user, db)
 
 
 @router.delete(
@@ -55,7 +55,8 @@ async def update_user(user_id: int, user: s.UserUpdate,  db: Session = Depends(g
 )
 async def delete_user(user_id: int,  db: Session = Depends(get_db)):
 
-    user_admin = get_item_by_column(model=Admin, columns={"user_id": user_id}, db=db)
+    user_admin = get_item_by_column(
+        model=Admin, columns={"user_id": user_id}, db=db)
 
     if (user_admin[0] != None):
         user_admin_id: int = user_admin[0].id

@@ -3,7 +3,7 @@ from sqlalchemy import (TIMESTAMP, Boolean, Column, Date, Enum, ForeignKey,
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
-from src.domain.enums.admin_status import AdminStatus
+from domain.enums.admin_status import AdminStatus
 
 from .base import Base
 

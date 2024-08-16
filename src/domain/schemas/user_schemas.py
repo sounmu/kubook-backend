@@ -1,11 +1,9 @@
 from datetime import datetime as _datetime
 
-from pydantic import Field
-
-from utils.common import CustomBaseModel
+from pydantic import BaseModel, Field
 
 
-class UserBase(CustomBaseModel):
+class UserBase(BaseModel):
     user_name: str = Field(..., title="user_name", description="사용자 이름", example="JohnDoe")
     is_active: bool = Field(True, title="is_active", description="활성 상태", example=True)
     email: str = Field(..., title="email", description="이메일", example="john.doe@example.com")

@@ -41,7 +41,7 @@ async def get_book_request(request_id: int, db: Session = Depends(get_db)):
     response_model=s.BookRequest,
     status_code=status.HTTP_200_OK
 )
-async def update_book_request(request_id: int, request_data: BookRequestUpdate, db: Session = Depends(get_db)):
+async def update_book_request(request_id: int, request_data: BookRequestCreate, db: Session = Depends(get_db)):
     return update_item(RequestedBook, request_id, request_data, db)
 
 

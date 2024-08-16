@@ -53,7 +53,7 @@ async def create_book_info(book_info_data: s.BookInfoCreate, db: Session = Depen
     response_model=s.BookInfo,
     status_code=status.HTTP_200_OK
 )
-async def update_book_info(book_info_id: int, book_info_data: s.BookInfoUpdate, db: Session = Depends(get_db)):
+async def update_book_info(book_info_id: int, book_info_data: s.BookInfoCreate, db: Session = Depends(get_db)):
     return update_item(BookInfo, book_info_id, book_info_data, db)
 
 
@@ -88,24 +88,24 @@ async def get_book_info(book_id: int, db: Session = Depends(get_db)):
     return get_item(Book, book_id, db)
 
 
-@router.post(
-    "/books",
-    summary="책 정보 등록",
-    response_model=s.Book,
-    status_code=status.HTTP_201_CREATED
-)
-async def create_book(book_data: BookCreate, db: Session = Depends(get_db)):
-    return create_item(Book, book_data, db)
+# @router.post(
+#     "/books",
+#     summary="책 정보 등록",
+#     response_model=s.Book,
+#     status_code=status.HTTP_201_CREATED
+# )
+# async def create_book(book_data: BookCreate, db: Session = Depends(get_db)):
+#     return create_item(Book, book_data, db)
 
 
-@router.patch(
-    "/books/{book_id}",
-    summary="책 정보 수정",
-    response_model=s.Book,
-    status_code=status.HTTP_200_OK
-)
-async def update_book(book_id: int, book_data: BookUpdate, db: Session = Depends(get_db)):
-    return update_item(Book, book_id, book_data, db)
+# @router.patch(
+#     "/books/{book_id}",
+#     summary="책 정보 수정",
+#     response_model=s.Book,
+#     status_code=status.HTTP_200_OK
+# )
+# async def update_book(book_id: int, book_data: BookUpdate, db: Session = Depends(get_db)):
+#     return update_item(Book, book_id, book_data, db)
 
 
 @router.delete(
