@@ -20,6 +20,7 @@ from routes.reservation_route import router as reservation_router
 from routes.review_route import router as review_router
 from routes.test_route import router as test_router
 from routes.user_route import router as user_router
+from routes.food_route import router as food_router
 
 settings = Settings()
 
@@ -71,6 +72,8 @@ app.include_router(reservation_router)
 app.include_router(review_router)
 app.include_router(test_router)
 app.include_router(user_router)
+
+app.include_router(food_router)
 
 
 @app.get("/")
