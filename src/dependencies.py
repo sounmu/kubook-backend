@@ -1,12 +1,12 @@
 from datetime import date
 
-from fastapi import Header, Depends, HTTPException, status
-from jose import JWTError, jwt
+from fastapi import Depends, Header, HTTPException, status
+from jose import jwt
 from sqlalchemy.orm import Session
 
-from database import get_db_session
 from config import Settings
-from models import User
+from database import get_db_session
+from repositories.models import User
 
 
 def get_db():
@@ -29,8 +29,6 @@ async def get_current_user(token=Header(None), db: Session = Depends(get_db)):
         raise credentials_exception
     user = db.query(User).filter(User.id == user_id).first()
     if user is None:
-        raise credentials_exception
-    if not user.is_valid:
         raise credentials_exception
     return user
 
