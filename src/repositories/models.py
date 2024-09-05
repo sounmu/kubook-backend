@@ -55,7 +55,7 @@ class RequestedBook(Base):
     request_link = Column(String(255), nullable=False)
     reason = Column(String, nullable=False)
     requested_at = Column(DateTime, nullable=False)
-    processing_status = Column(String(20), nullable=False)
+    processing_status = Column(Integer, nullable=False)
     processed_at = Column(DateTime)
     created_at = Column(DateTime, nullable=False)
     updated_at = Column(DateTime, nullable=False)

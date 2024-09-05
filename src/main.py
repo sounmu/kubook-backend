@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from config import Settings
 from routes.authentication_route import router as auth_router
 from routes.user_bookrequest_route import router as my_bookrequest_router
+from routes.bookrequests_route import router as bookrequest_router
 
 settings = Settings()
 
@@ -39,6 +40,7 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(my_bookrequest_router)
+app.include_router(bookrequest_router)
 
 
 @app.get("/")
