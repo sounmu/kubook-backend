@@ -33,14 +33,11 @@ async def update_bookrequest(request_data: UpdateBookRequestRequest, db: Session
 
 
 async def read_bookrequest(request_data: ReqeustGetMyBookRequest, db: Session) -> List[BookRequestResponse]:
-    if request_data.user_id:
-        requested_book_list: List[RequestedBook] = get_item_by_column(
-            model=RequestedBook,
-            columns={'user_id': request_data.user_id},
-            db=db
-        )
-    else:
-        return
+    requested_book_list: List[RequestedBook] = get_item_by_column(
+        model=RequestedBook,
+        columns={'user_id': request_data.user_id},
+        db=db
+    )
 
     response = []
     for book in requested_book_list:
