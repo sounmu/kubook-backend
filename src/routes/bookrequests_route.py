@@ -22,7 +22,7 @@ async def delete_my_bookrequests(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_active_user)
 ):
-    domain_req = DeleteBookRequestRequest(request_id=request_id, processing_status=2, is_deleted=True)
+    domain_req = DeleteBookRequestRequest(request_id=request_id, processing_status=2)
     await service_delete_bookrequest(domain_req, db)
 
     return
