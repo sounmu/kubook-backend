@@ -1,0 +1,9 @@
+[tool.autopep8]
+max-line-length = 140
+aggressive = true
+exclude = ["**/__init__.py"]
+
+[tool.pylint]
+max-line-length = 140
+ignore = ["venv"]
+disable = ["C0111", "E1102"]

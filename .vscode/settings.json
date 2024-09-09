@@ -1,7 +1,23 @@
 {
-    "autopep8.args": [
-        "--max-line-length",
-        "1000"
-    ],
-    "editor.formatOnSave": true
+  "[python]": {
+    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.formatOnType": true,
+    "editor.wordBasedSuggestions": "off",
+    "editor.defaultFormatter": "ms-python.autopep8"
+  },
+  "editor.formatOnSave": true,
+  
+  "python.languageServer": "Pylance",
+  "python.analysis.diagnosticSeverityOverrides": {
+    "reportMissingImports": "warning" // 존재하지 않는 모듈 임포트에 대한 경고를 표시
+  },
+  "python.analysis.autoSearchPaths": true,
+  "python.analysis.diagnosticMode": "workspace",
+  "python.analysis.extraPaths": ["./src"], // 워크스페이스 안의 src 폴더 전체에 대해 분석
+  "python.analysis.typeCheckingMode": "off", // 타입 검사 모드 (필요시 "basic" 또는 "strict"로 변경 가능)
+  "python.REPL.enableREPLSmartSend": false,
+  "pylint.importStrategy": "useBundled",
+  "editor.defaultFormatter": null,
+  "editor.defaultFoldingRangeProvider": "ms-python.autopep8",
+  "pylint.cwd": "${workspaceFolder}"
 }
