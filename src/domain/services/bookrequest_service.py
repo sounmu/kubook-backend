@@ -65,16 +65,4 @@ async def delete_bookrequest(request_data: DeleteBookRequestRequest, db: Session
     # 도서 구매 요청 table 수정
     updated_book = update_item(RequestedBook, request_data.request_id, request_data, db)
 
-    # domain response schema 생성
-    response = BookRequestResponse(
-        user_id=updated_book.user_id,
-        request_id=updated_book.id,
-        book_title=updated_book.book_title,
-        publication_year=updated_book.publication_year,
-        request_link=updated_book.request_link,
-        reason=updated_book.reason,
-        processing_status=updated_book.processing_status,
-        request_date=updated_book.requested_at.date(),
-        reject_reason=updated_book.reject_reason
-    )
-    return response
+    return
