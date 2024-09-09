@@ -1,16 +1,18 @@
 {
-  "editor.formatOnSave": true, // Format files on save
+  "editor.formatOnSave": true,
 
-  // Organize imports automatically
-  "editor.codeActionsOnSave": {
-    "source.organizeImports": "explicit",
-    "source.fixAll.ruff": "explicit"
-  },
-
-  // Use Ruff for linting
   "[python]": {
-    "editor.defaultFormatter": null, // No need to specify a formatter for Ruff
-    "editor.formatOnType": true
+    "editor.defaultFormatter": null,
+    "editor.formatOnType": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit",
+      "source.fixAll.ruff": "explicit"
+    }
   },
-  "ruff.configuration": "../pyproject.toml"
+  "ruff.configuration": "../pyproject.toml",
+  "ruff.lineLength": 120,
+  "ruff.nativeServer": "on",
+  "ruff.lint.select": ["A", "C", "E", "F", "W", "I", "UP"],
+  "ruff.exclude": ["venv", ".git", "__pycache__", "__init__.py"],
+  "ruff.lint.ignore": ["C0111", "E1102", "E712", "UP017"]
 }
