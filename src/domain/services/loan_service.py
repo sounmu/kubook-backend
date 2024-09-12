@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select, and_
 
 from domain.schemas.loan_schemas import LoanItem, LoanResponse, LoanCreateRequest, LoanExtendRequest
-from repositories.models import Loan
+from repositories.models import Loan, Book
 
 
 async def get_all_user_loans(user_id, db: Session):
@@ -93,6 +93,12 @@ async def extend_loan(request: LoanExtendRequest, db: Session):
 
 
 async def create_loan(request: LoanCreateRequest, db: Session):
+    stmt = select(Book).where(Book.id == request.book_id)
+
+    if not db.execute(stmt).scalar_one_or_none():
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                            detail=f"Invalid book ID")
+
     loan = Loan(
         book_id=request.book_id,
         user_id=request.user_id,
