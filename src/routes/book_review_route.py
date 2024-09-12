@@ -15,7 +15,7 @@ router = APIRouter(
 
 
 @router.get(
-    "/{user_id}/loans",
+    "/{user_id}/reviews",
     response_model=BookReviewListResponse,
     status_code=status.HTTP_200_OK,
     summary="회원의 전체 리뷰 목록 조회",

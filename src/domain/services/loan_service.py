@@ -3,14 +3,14 @@ from datetime import timedelta
 from fastapi import HTTPException, status
 from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, and_
 
 from domain.schemas.loan_schemas import LoanItem, LoanResponse, LoanCreateRequest, LoanExtendRequest
 from repositories.models import Loan
 
 
 async def get_all_user_loans(user_id, db: Session):
-    stmt = select(Loan).where((Loan.user_id == user_id) and (Loan.is_deleted == False)).order_by(Loan.updated_at)
+    stmt = select(Loan).where(and_(Loan.user_id == user_id, Loan.is_deleted == False)).order_by(Loan.updated_at)
 
     try:
         loans = db.scalars(stmt).all()  # loans를 리스트로 반환
@@ -38,7 +38,7 @@ async def get_all_user_loans(user_id, db: Session):
 
 
 async def extend_loan(request: LoanExtendRequest, db: Session):
-    stmt = select(Loan).where((Loan.id == request.loan_id) and (Loan.is_deleted == False))
+    stmt = select(Loan).where(and_(Loan.id == request.loan_id, Loan.is_deleted == False))
 
     try:
         loan = db.execute(stmt).scalar_one()

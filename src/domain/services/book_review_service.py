@@ -1,7 +1,7 @@
 from datetime import datetime as _datetime
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, and_
 from sqlalchemy.exc import NoResultFound, IntegrityError
 
 from domain.schemas.book_review_schemas import BookReviewCreateRequest, BookReviewCreateResponse, BookReviewItem
@@ -10,7 +10,7 @@ from utils.crud_utils import get_item
 
 
 async def get_all_user_reviews(user_id, db: Session):
-    stmt = select(BookReview).where((BookReview.user_id == user_id) and (BookReview.is_deleted == False)).order_by(BookReview.created_at)
+    stmt = select(BookReview).where(and_(BookReview.user_id == user_id, BookReview.is_deleted == False)).order_by(BookReview.created_at)
 
     try:
         reviews = db.scalars(stmt).all()  # loans를 리스트로 반환
@@ -37,7 +37,7 @@ async def get_all_user_reviews(user_id, db: Session):
 
 
 async def delete_review(review_id, user_id, db: Session):
-    stmt = select(BookReview).where((BookReview.id == review_id) and (BookReview.is_deleted == False))
+    stmt = select(BookReview).where(and_(BookReview.id == review_id, BookReview.is_deleted == False))
 
     try:
         review = db.execute(stmt).scalar_one()
