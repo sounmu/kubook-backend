@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
-from domain.schemas.loan_schemas import LoanItem, LoanListResponse
+from domain.schemas.loan_schemas import LoanItem, LoanResponse, LoanCreateRequest, LoanExtendRequest
 from repositories.models import Loan
 
 
@@ -18,7 +18,7 @@ async def get_all_user_loans(user_id, db: Session):
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                                 detail="Loans not found")
         result = [
-            LoanListResponse(
+            LoanResponse(
                 loan_id=loan.id,
                 user_id=loan.user_id,
                 book_id=loan.book_id,
@@ -37,13 +37,13 @@ async def get_all_user_loans(user_id, db: Session):
     return result
 
 
-async def extend_loan(loan_id, user_id, db: Session):
-    stmt = select(Loan).where((Loan.id == loan_id) and (Loan.is_deleted == False) and (Loan.extend_status == False))
+async def extend_loan(request: LoanExtendRequest, db: Session):
+    stmt = select(Loan).where((Loan.id == request.loan_id) and (Loan.is_deleted == False))
 
     try:
         loan = db.execute(stmt).scalar_one()
 
-        if loan.user_id != user_id:
+        if loan.user_id != request.user_id:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                                 detail="You do not have permission to access this loan.")
         # 이미 반납된 도서인지 확인
@@ -92,10 +92,10 @@ async def extend_loan(loan_id, user_id, db: Session):
         return result
 
 
-async def create_loan(user_id, book_id, db: Session):
+async def create_loan(request: LoanCreateRequest, db: Session):
     loan = Loan(
-        book_id=book_id,
-        user_id=user_id,
+        book_id=request.book_id,
+        user_id=request.user_id,
         loan_date=_datetime.today().date(),
         due_date=(_datetime.today() + timedelta(days=14)).date(),
         created_at=_datetime.now(),

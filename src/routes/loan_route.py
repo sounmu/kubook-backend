@@ -28,7 +28,7 @@ async def create_loan(
         user_id=current_user.id,
         book_id=book_id
     )
-    result = await service_create_loan(request.user_id, request.book_id, db)
+    result = await service_create_loan(request, db)
     return result
 
 
@@ -47,5 +47,5 @@ async def extend_loan(
         loan_id=loan_id,
         user_id=current_user.id
     )
-    result = await service_extend_loan(request.loan_id, request.user_id, db)
+    result = await service_extend_loan(request, db)
     return result

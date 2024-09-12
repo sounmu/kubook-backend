@@ -50,7 +50,7 @@ async def create_review(
         book_info_id=book_info_id,
         review_content=review_content
     )
-    result = await service_create_review(request.user_id, request.book_info_id, request.review_content, db)
+    result = await service_create_review(request, db)
     return result
 
 

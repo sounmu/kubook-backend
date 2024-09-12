@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select
 from sqlalchemy.exc import NoResultFound, IntegrityError
 
-from domain.schemas.book_review_schemas import BookReviewCreateResponse, BookReviewItem
+from domain.schemas.book_review_schemas import BookReviewCreateRequest, BookReviewCreateResponse, BookReviewItem
 from repositories.models import BookReview, User
 from utils.crud_utils import get_item
 
@@ -63,11 +63,11 @@ async def delete_review(review_id, user_id, db: Session):
         return
 
 
-async def create_review(user_id, book_info_id, review_content, db: Session):
+async def create_review(request: BookReviewCreateRequest, db: Session):
     review = BookReview(
-        user_id=user_id,
-        book_info_id=book_info_id,
-        review_content=review_content,
+        user_id=request.user_id,
+        book_info_id=request.book_info_id,
+        review_content=request.review_content,
         created_at=_datetime.now(),
         updated_at=_datetime.now()
     )
@@ -88,7 +88,7 @@ async def create_review(user_id, book_info_id, review_content, db: Session):
         db.commit()
         db.refresh(review)
 
-        user = get_item(User, user_id, db)
+        user = get_item(User, request.user_id, db)
         result = BookReviewCreateResponse(
             review_id=review.id,
             user_id=review.user_id,
