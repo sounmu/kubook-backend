@@ -94,10 +94,13 @@ async def extend_loan(request: LoanExtendRequest, db: Session):
 
 async def create_loan(request: LoanCreateRequest, db: Session):
     stmt = select(Book).where(Book.id == request.book_id)
+    valid_book_id = db.execute(stmt).scalar_one_or_none()
 
-    if not db.execute(stmt).scalar_one_or_none():
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                            detail=f"Invalid book ID")
+    if not valid_book_id:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Invalid book ID"
+        )
 
     loan = Loan(
         book_id=request.book_id,

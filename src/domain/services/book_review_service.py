@@ -65,10 +65,13 @@ async def delete_review(review_id, user_id, db: Session):
 
 async def create_review(request: BookReviewCreateRequest, db: Session):
     stmt = select(BookInfo).where(BookInfo.id == request.book_info_id)
+    valid_book_info = db.execute(stmt).scalar_one_or_none()
 
-    if not db.execute(stmt).scalar_one_or_none():
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                            detail=f"Invalid book info ID")
+    if not valid_book_info:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Invalid book info ID"
+        )
 
     review = BookReview(
         user_id=request.user_id,
@@ -84,12 +87,16 @@ async def create_review(request: BookReviewCreateRequest, db: Session):
 
     except IntegrityError as e:
         db.rollback()
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                            detail=f"Integrity Error occurred during create the new review item. {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Integrity Error occurred during create the new review item. {str(e)}"
+        )
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                            detail=f"Unexpected error occurred: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Unexpected error occurred: {str(e)}"
+        )
     else:
         db.commit()
         db.refresh(review)
