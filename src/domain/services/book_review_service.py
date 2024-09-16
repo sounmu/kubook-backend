@@ -85,12 +85,6 @@ async def create_review(request: BookReviewCreateRequest, db: Session):
         db.add(review)
         db.flush()
 
-    except IntegrityError as e:
-        db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f"Integrity Error occurred during create the new review item. {str(e)}"
-        )
     except Exception as e:
         db.rollback()
         raise HTTPException(

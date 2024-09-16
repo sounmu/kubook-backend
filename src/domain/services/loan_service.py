@@ -115,10 +115,6 @@ async def create_loan(request: LoanCreateRequest, db: Session):
         db.add(loan)
         db.flush()
 
-    except IntegrityError as e:
-        db.rollback()
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                            detail=f"Integrity Error occurred during create the new loan item. {str(e)}")
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
