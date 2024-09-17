@@ -24,13 +24,13 @@ async def get_all_user_reviews(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_active_user)
 ):
-    result = await service_get_all_user_reviews(current_user.id, db)
+    domain_res = await service_get_all_user_reviews(current_user.id, db)
 
-    response = BookReviewListResponse(
-        data=result,
-        count=len(result)
+    result = BookReviewListResponse(
+        data=domain_res,
+        count=len(domain_res)
     )
-    return response
+    return result
 
 
 @router.post(
@@ -45,12 +45,12 @@ async def create_review(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_active_user)
 ):
-    request = BookReviewCreateRequest(
+    domain_req = BookReviewCreateRequest(
         user_id=current_user.id,
         book_info_id=book_info_id,
         review_content=review_content
     )
-    result = await service_create_review(request, db)
+    result = await service_create_review(domain_req, db)
     return result
 
 

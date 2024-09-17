@@ -2,7 +2,7 @@ from datetime import datetime as _datetime
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import select, and_
-from sqlalchemy.exc import NoResultFound, IntegrityError
+from sqlalchemy.exc import NoResultFound
 
 from domain.schemas.book_review_schemas import BookReviewCreateRequest, BookReviewCreateResponse, BookReviewItem
 from repositories.models import BookReview, User, BookInfo

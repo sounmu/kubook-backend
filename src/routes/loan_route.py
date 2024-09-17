@@ -24,11 +24,11 @@ async def create_loan(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_active_user)
 ):
-    request = LoanCreateRequest(
+    domain_req = LoanCreateRequest(
         user_id=current_user.id,
         book_id=book_id
     )
-    result = await service_create_loan(request, db)
+    result = await service_create_loan(domain_req, db)
     return result
 
 
@@ -43,9 +43,9 @@ async def extend_loan(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_active_user)
 ):
-    request = LoanExtendRequest(
+    domain_req = LoanExtendRequest(
         loan_id=loan_id,
         user_id=current_user.id
     )
-    result = await service_extend_loan(request, db)
+    result = await service_extend_loan(domain_req, db)
     return result
