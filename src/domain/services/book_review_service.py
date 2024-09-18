@@ -20,7 +20,7 @@ async def get_all_reviews_by_bookinfo_id(book_info_id, db: Session):
         .order_by(BookReview.created_at)
     )
     try:
-        reviews = db.execute(stmt).scalars().all()  # loans를 리스트로 반환
+        reviews = db.execute(stmt).scalars().all()
 
         if not reviews:
             raise HTTPException(
