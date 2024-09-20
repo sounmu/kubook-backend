@@ -140,4 +140,5 @@ def get_item_by_column(*, model, columns: Dict[str, Any], db: Session):
                 return None
 
     result = db.scalars(stmt).all()
+    
     return result
