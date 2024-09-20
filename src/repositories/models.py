@@ -73,8 +73,8 @@ class Loan(Base):
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
     loan_date = Column(DateTime, nullable=False)
     due_date = Column(DateTime, nullable=False)
-    extend_status = Column(String(20), nullable=False, default=False)
-    return_status = Column(String(20), nullable=False, default=False)
+    extend_status = Column(Boolean, nullable=False, default=False)
+    return_status = Column(Boolean, nullable=False, default=False)
     return_date = Column(DateTime)
     overdue_days = Column(Integer, nullable=False, default=0)
     created_at = Column(DateTime, nullable=False)
@@ -106,7 +106,7 @@ class BookInfo(Base):
     __tablename__ = 'book_info'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    title = Column(String(255), nullable=False)
+    book_title = Column(String(255), nullable=False)
     code = Column(String(20), nullable=False)
     category_name = Column(String(50), nullable=False)
     subtitle = Column(String(255))
