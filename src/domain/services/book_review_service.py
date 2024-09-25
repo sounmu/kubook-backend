@@ -1,12 +1,40 @@
-from datetime import datetime as _datetime
+
 from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 from sqlalchemy import select, and_
 from sqlalchemy.exc import NoResultFound
 
-from domain.schemas.book_review_schemas import BookReviewCreateRequest, BookReviewCreateResponse, BookReviewItem
+from domain.schemas.book_review_schemas import BookReviewByInfoId, BookReviewCreateRequest, BookReviewCreateResponse, BookReviewItem
 from repositories.models import BookReview, User, BookInfo
 from utils.crud_utils import get_item
+from datetime import datetime as _datetime
+
+async def get_all_reviews_by_bookinfo_id(book_info_id, db: Session):
+    stmt = (
+        select(BookReview)
+        .options(selectinload(BookReview.user))
+        .where(
+            and_(
+                BookReview.book_info_id == book_info_id,
+                BookReview.is_deleted == False
+            )
+        )
+        .order_by(BookReview.created_at)
+    )
+    try:
+        reviews = db.execute(stmt).scalars().all()
+
+        if not reviews:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Reviews not found"
+            )
+
+        response = [
+            BookReviewByInfoId(
+                review_id=review.id,
+                user_id=review.user_id,
+                user_name=review.user.user_name,
 
 
 async def get_all_user_reviews(user_id, db: Session):
@@ -105,3 +133,4 @@ async def create_review(request: BookReviewCreateRequest, db: Session):
             created_at=review.created_at,
         )
         return result
+

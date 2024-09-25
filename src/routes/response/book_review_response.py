@@ -3,7 +3,7 @@ from datetime import datetime as _datetime
 from typing import List
 from pydantic import BaseModel, Field
 
-from domain.schemas.book_review_schemas import BookReviewItem
+from domain.schemas.book_review_schemas import BookReviewItem, BookReviewByInfoId
 
 
 class BookReviewListResponse(BaseModel):
@@ -15,4 +15,8 @@ class BookReviewListResponse(BaseModel):
         count (int): data 배열의 요소 개수를 나타냅니다.
     """
     data: List[BookReviewItem]
+    count: int = Field(description="data 배열의 요소 개수")
+ 
+class BookReviewListByInfoIdResponse(BaseModel):
+    data: List[BookReviewByInfoId]
     count: int = Field(description="data 배열의 요소 개수")
