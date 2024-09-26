@@ -3,29 +3,20 @@ from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
 from domain.schemas.bookrequest_schemas import (
-    BookRequestResponse,
-    DeleteBookRequestRequest,
-    ReqeustGetMyBookRequest,
-    UpdateBookRequestRequest,
+    DomainReqDelBookRequest,
+    DomainReqGetBookRequest,
+    DomainReqPutBookRequest,
+    DomainResBookRequest,
 )
 from repositories.models import RequestedBook
-from utils.crud_utils import get_item, get_item_by_column, update_item
+from utils.crud_utils import get_item_by_column, update_item
 
 
-async def service_update_bookrequest(request_data: UpdateBookRequestRequest, db: Session):
-    requested_book = get_item(RequestedBook, request_data.request_id, db)
-
-    if not requested_book:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Requested book not found"
-            ) from None
-
-    # 도서 구매 요청 table 수정
+async def service_update_bookrequest(request_data: DomainReqPutBookRequest, db: Session):
     updated_book = update_item(RequestedBook, request_data.request_id, request_data, db)
 
     # domain response schema 생성
-    response = BookRequestResponse(
+    response = DomainResBookRequest(
         user_id=updated_book.user_id,
         request_id=updated_book.id,
         book_title=updated_book.book_title,
@@ -39,16 +30,14 @@ async def service_update_bookrequest(request_data: UpdateBookRequestRequest, db:
     return response
 
 
-async def service_read_bookrequest(request_data: ReqeustGetMyBookRequest, db: Session) -> list[BookRequestResponse]:
+async def service_read_bookrequest(request_data: DomainReqGetBookRequest, db: Session) -> list[DomainResBookRequest]:
     requested_book_list: list[RequestedBook] = get_item_by_column(
         model=RequestedBook,
         columns={'user_id': request_data.user_id},
         db=db
     )
 
-    response = []
-    for book in requested_book_list:
-        requested_book = BookRequestResponse(
+    response = [DomainResBookRequest(
             request_id=book.id,
             user_id=book.user_id,
             book_title=book.book_title,
@@ -58,18 +47,13 @@ async def service_read_bookrequest(request_data: ReqeustGetMyBookRequest, db: Se
             processing_status=book.processing_status,
             request_date=book.requested_at.date(),
             reject_reason=book.reject_reason
-        )
-        response.append(requested_book)
+        ) for book in requested_book_list]
     return response
 
 
-async def service_delete_bookrequest(request_data: DeleteBookRequestRequest, db: Session):
-    requested_book = get_item(RequestedBook, request_data.request_id, db)
+async def service_delete_bookrequest(request_data: DomainReqDelBookRequest, db: Session):
+    requested_book = update_item(RequestedBook, request_data.request_id, request_data, db)
 
     if not requested_book:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Requested book not found")
-
-    # 도서 구매 요청 table 수정
-    update_item(RequestedBook, request_data.request_id, request_data, db)
-
     return
