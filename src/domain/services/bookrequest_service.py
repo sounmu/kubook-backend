@@ -16,7 +16,10 @@ async def update_bookrequest(request_data: UpdateBookRequestRequest, db: Session
     requested_book = get_item(RequestedBook, request_data.request_id, db)
 
     if not requested_book:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Requested book not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Requested book not found"
+            ) from None
 
     # 도서 구매 요청 table 수정
     updated_book = update_item(RequestedBook, request_data.request_id, request_data, db)

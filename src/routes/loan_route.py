@@ -2,10 +2,11 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from dependencies import get_current_active_user, get_db
-from domain.schemas.loan_schemas import LoanItem, LoanExtendRequest, LoanCreateRequest
-from domain.services.loan_service import extend_loan as service_extend_loan
+from domain.schemas.loan_schemas import LoanCreateRequest, LoanExtendRequest, LoanItem
 from domain.services.loan_service import create_loan as service_create_loan
+from domain.services.loan_service import extend_loan as service_extend_loan
 from routes.response.loan_response import LoanCreateResponse
+
 router = APIRouter(
     prefix="/loans",
     tags=["loans"],

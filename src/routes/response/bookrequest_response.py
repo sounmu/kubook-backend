@@ -1,6 +1,6 @@
 from datetime import date
 from datetime import datetime as _datetime
-from typing import List, Optional
+
 from pydantic import BaseModel, Field
 
 
@@ -13,9 +13,9 @@ class BookRequestResponse(BaseModel):
     reason: str = Field(title="reason", description="이유", example="Need for study")
     processing_status: int = Field(0, title="processing_status", description="처리 상태", example=0, ge=0, le=3)
     request_date: date = Field(title="request_date", description="요청 일자", example=_datetime.now().date())
-    reject_reason: Optional[str] = Field(None, title="reject_reason", description="거절 사유", example="Not available")
+    reject_reason: str | None = Field(None, title="reject_reason", description="거절 사유", example="Not available")
 
 
 class BookRequestListResponse(BaseModel):
-    data: List[BookRequestResponse]
+    data: list[BookRequestResponse]
     count: int = Field(0, title="bookrequest_count", description="data 배열의 요소 개수", ge=0)

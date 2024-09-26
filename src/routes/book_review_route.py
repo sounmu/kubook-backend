@@ -1,18 +1,47 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.orm import Session
 
 from dependencies import get_current_active_user, get_db
-from routes.response.book_review_response import BookReviewListResponse
-from domain.schemas.book_review_schemas import BookReviewCreateRequest, BookReviewCreateResponse
-from domain.services.book_review_service import get_all_user_reviews as service_get_all_user_reviews
-from domain.services.book_review_service import delete_review as service_delete_review
+from domain.schemas.book_review_schemas import (
+    BookReviewCreateRequest,
+    BookReviewCreateResponse,
+    BookReviewItem,
+    BookReviewUpdateRequest,
+)
 from domain.services.book_review_service import create_review as service_create_review
+from domain.services.book_review_service import delete_review as service_delete_review
+from domain.services.book_review_service import get_all_reviews_by_bookinfo_id as service_get_all_reviews_by_bookinfo_id
+from domain.services.book_review_service import get_all_user_reviews as service_get_all_user_reviews
+from domain.services.book_review_service import update_review as service_update_review
+from routes.request.book_review_request import BookReviewUpdateRouteRequest
+from routes.response.book_review_response import BookReviewListByInfoIdResponse, BookReviewListResponse
+
 router = APIRouter(
     prefix="/reviews",
     tags=["reviews"],
     dependencies=[Depends(get_current_active_user)]
 )
 
+
+@router.get(
+    "/",
+    response_model=BookReviewListByInfoIdResponse,
+    status_code=status.HTTP_200_OK,
+    summary="책에 대한 리뷰 조회"
+)
+async def get_all_reviews_by_bookinfo_id(
+    book_info_id: int = Query(alias="books"),
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_active_user)
+):
+    domain_res = await service_get_all_reviews_by_bookinfo_id(book_info_id, db)
+
+    result = BookReviewListByInfoIdResponse(
+        data=domain_res,
+        count=len(domain_res)
+    )
+
+    return result
 
 @router.get(
     "/{user_id}/reviews",
@@ -66,3 +95,24 @@ async def delete_reivew(
 ):
     await service_delete_review(review_id, current_user.id, db)
     return
+
+@router.put(
+    "/{review_id}",
+    response_model=BookReviewItem,
+    status_code=status.HTTP_200_OK,
+    summary="리뷰 수정"
+)
+async def update_review(
+    review_id: int,
+    review_update_data: BookReviewUpdateRouteRequest,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_active_user)
+):
+    domain_req = BookReviewUpdateRequest(
+        review_id=review_id,
+        review_content=review_update_data.review_content,
+        user_id=current_user.id
+    )
+    result = await service_update_review(domain_req, db)
+    return result
+

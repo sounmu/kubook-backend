@@ -50,12 +50,7 @@ def create_item(model, req_data, db: Session):
         db.rollback()
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=(
-            f"Integrity Error occurred during create the new {model.__name__} item. "
-            f"{str(e)}"
-            )
-        ) from e
-
+            detail=f"Integrity Error occurred during create the new {model.__name__} item. {str(e)}") from e
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -93,10 +88,8 @@ def update_item(model, index: int, req_data, db: Session):
 
     except IntegrityError as e:
         db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            etail=f"Integrity Error occurred during update the new {model.__name__} item.: {str(e)}"
-            ) from e
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                            detail=f"Integrity Error occurred during update the new {model.__name__} item.: {str(e)}") from e
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
