@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from dependencies import get_db
-from domain.schemas.bookinfo_schemas import ReqeustGetBookInfo
-from domain.services.bookinfo_service import read_bookinfo as service_read_bookinfo
-from routes.response.bookinfo_response import BookInfoResponse
+from domain.schemas.bookinfo_schemas import DomainReqGetBookInfo
+from domain.services.bookinfo_service import service_read_bookinfo
+from routes.response.bookinfo_response import RouteResBookInfo
 
 router = APIRouter(
     prefix="/books",
@@ -15,16 +15,16 @@ router = APIRouter(
 @router.get(
     "/{bookinfo_id}",
     summary="도서 상세 정보 조회",
-    response_model=BookInfoResponse,
+    response_model=RouteResBookInfo,
     status_code=status.HTTP_200_OK
 )
 async def get_bookinfo(
     bookinfo_id: int,
     db: Session = Depends(get_db),
 ):
-    domain_req = ReqeustGetBookInfo(bookinfo_id=bookinfo_id)
+    domain_req = DomainReqGetBookInfo(bookinfo_id=bookinfo_id)
     domain_res = await service_read_bookinfo(domain_req, db)
-    result = BookInfoResponse(
+    result = RouteResBookInfo(
         bookinfo_id=domain_res.bookinfo_id,
         book_title=domain_res.book_title,
         code=domain_res.code,

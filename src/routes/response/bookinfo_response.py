@@ -2,7 +2,7 @@
 from pydantic import BaseModel, Field
 
 
-class BookInfoResponse(BaseModel):
+class RouteResBookInfo(BaseModel):
     bookinfo_id: int = Field(title="bookinfo_id", description="도서 정보 ID", example=1, gt=0)
     book_title: str = Field(title="book_title", description="책 제목", example="FastAPI Tutorial")
     code: str = Field(title="code", description="책 코드", example="A3")

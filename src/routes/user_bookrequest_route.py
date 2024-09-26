@@ -2,11 +2,10 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from dependencies import get_current_active_user, get_db
-from domain.schemas.bookrequest_schemas import ReqeustGetMyBookRequest, UpdateBookRequestRequest
-from domain.services.bookrequest_service import read_bookrequest as service_read_bookrequest
-from domain.services.bookrequest_service import update_bookrequest as service_update_bookrequest
-from routes.request.update_bookrequest_request import UpdateBookRequest
-from routes.response.bookrequest_response import BookRequestListResponse, BookRequestResponse
+from domain.schemas.bookrequest_schemas import DomainReqGetBookRequest, DomainReqPutBookRequest
+from domain.services.bookrequest_service import service_read_bookrequest, service_update_bookrequest
+from routes.request.update_bookrequest_request import RouteReqPutBookRequest
+from routes.response.bookrequest_response import RouteResBookRequest, RouteResBookRequestList
 
 router = APIRouter(
     prefix="/users",
@@ -18,17 +17,17 @@ router = APIRouter(
 @router.get(
     "/{user_id}/book-requests",
     summary="도서 구매 요청 목록 조회",
-    response_model=BookRequestListResponse,
+    response_model=RouteResBookRequestList,
     status_code=status.HTTP_200_OK
 )
-async def get_my_bookrequests(
+async def get_user_bookrequests(
     user_id: int,
     db: Session = Depends(get_db),
     current_user=Depends(get_current_active_user)
 ):
-    domain_req = ReqeustGetMyBookRequest(user_id=user_id)
+    domain_req = DomainReqGetBookRequest(user_id=user_id)
     domain_res = await service_read_bookrequest(domain_req, db)
-    converted_res = [BookRequestResponse(
+    converted_res = [RouteReqPutBookRequest(
         user_id=item.user_id,
         request_id=item.request_id,
         book_title=item.book_title,
@@ -40,24 +39,24 @@ async def get_my_bookrequests(
         reject_reason=item.reject_reason
     ) for item in domain_res]
 
-    result = BookRequestListResponse(data=converted_res, count=len(converted_res))
+    result = RouteResBookRequestList(data=converted_res, count=len(converted_res))
     return result
 
 
 @router.put(
     "/{user_id}/book-requests/{request_id}",
     summary="도서 구매 요청 수정",
-    response_model=BookRequestResponse,
+    response_model=RouteResBookRequest,
     status_code=status.HTTP_200_OK
 )
 async def update_user_bookrequest(
     user_id: int,
     request_id: int,
-    request_data: UpdateBookRequest,
+    request_data: RouteReqPutBookRequest,
     db: Session = Depends(get_db),
     current_user=Depends(get_current_active_user),
 ):
-    domain_req = UpdateBookRequestRequest(
+    domain_req = DomainReqPutBookRequest(
         user_id=user_id,
         request_id=request_id,
         book_title=request_data.book_title,
@@ -67,7 +66,7 @@ async def update_user_bookrequest(
     )
 
     domain_res = await service_update_bookrequest(domain_req, db)
-    result = BookRequestResponse(
+    result = RouteResBookRequest(
         user_id=domain_res.user_id,
         request_id=domain_res.request_id,
         book_title=domain_res.book_title,

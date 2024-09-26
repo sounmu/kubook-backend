@@ -4,16 +4,16 @@ from datetime import datetime as _datetime
 from pydantic import BaseModel, Field
 
 
-class ReqeustGetMyBookRequest(BaseModel):
+class DomainReqGetBookRequest(BaseModel):
     user_id: int = Field(title="user_id", description="도서 구매를 요청한 사용자 ID", example=1, gt=0)
 
 
-class DeleteBookRequestRequest(BaseModel):
+class DomainReqDelBookRequest(BaseModel):
     request_id: int = Field(title="book_request_id", description="도서 구매 요청 정보 id", example=1, gt=0)
     processing_status: int = Field(0, title="processing_status", description="처리 상태", example=0, ge=0, le=3)
 
 
-class UpdateBookRequestRequest(BaseModel):
+class DomainReqPutBookRequest(BaseModel):
     user_id: int = Field(title="user_id", description="도서 구매를 요청한 사용자 ID", example=1, gt=0)
     request_id: int = Field(title="book_request_id", description="도서 구매 요청 정보 id", example=1, gt=0)
     book_title: str = Field(title="book_title", description="책 제목", example="FastAPI Tutorial")
@@ -22,7 +22,7 @@ class UpdateBookRequestRequest(BaseModel):
     reason: str = Field(title="reason", description="이유", example="Need for study")
 
 
-class BookRequestResponse(BaseModel):
+class DomainResBookRequest(BaseModel):
     user_id: int = Field(title="user_id", description="도서 구매를 요청한 사용자 ID", example=1, gt=0)
     request_id: int = Field(title="book_request_id", description="도서 구매 요청 정보 id", example=1, gt=0)
     book_title: str = Field(title="book_title", description="책 제목", example="FastAPI Tutorial")

@@ -7,7 +7,7 @@ from repositories.models import BookInfo
 from utils.crud_utils import get_item
 
 
-async def read_bookinfo(request_data: ReqeustGetBookInfo, db: Session):
+async def service_read_bookinfo(request_data: ReqeustGetBookInfo, db: Session):
     requested_book = get_item(BookInfo, request_data.bookinfo_id, db)
 
     if not requested_book:

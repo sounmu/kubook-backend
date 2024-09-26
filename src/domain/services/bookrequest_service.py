@@ -12,7 +12,7 @@ from repositories.models import RequestedBook
 from utils.crud_utils import get_item, get_item_by_column, update_item
 
 
-async def update_bookrequest(request_data: UpdateBookRequestRequest, db: Session):
+async def service_update_bookrequest(request_data: UpdateBookRequestRequest, db: Session):
     requested_book = get_item(RequestedBook, request_data.request_id, db)
 
     if not requested_book:
@@ -39,7 +39,7 @@ async def update_bookrequest(request_data: UpdateBookRequestRequest, db: Session
     return response
 
 
-async def read_bookrequest(request_data: ReqeustGetMyBookRequest, db: Session) -> list[BookRequestResponse]:
+async def service_read_bookrequest(request_data: ReqeustGetMyBookRequest, db: Session) -> list[BookRequestResponse]:
     requested_book_list: list[RequestedBook] = get_item_by_column(
         model=RequestedBook,
         columns={'user_id': request_data.user_id},
@@ -63,7 +63,7 @@ async def read_bookrequest(request_data: ReqeustGetMyBookRequest, db: Session) -
     return response
 
 
-async def delete_bookrequest(request_data: DeleteBookRequestRequest, db: Session):
+async def service_delete_bookrequest(request_data: DeleteBookRequestRequest, db: Session):
     requested_book = get_item(RequestedBook, request_data.request_id, db)
 
     if not requested_book:
