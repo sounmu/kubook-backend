@@ -1,13 +1,21 @@
 
-from fastapi import HTTPException, status
-from sqlalchemy.orm import Session, selectinload
-from sqlalchemy import select, and_
-from sqlalchemy.exc import NoResultFound, IntegrityError
-
-from domain.schemas.book_review_schemas import BookReviewByInfoId, BookReviewCreateRequest, BookReviewCreateResponse, BookReviewItem, BookReviewUpdateRequest
-from repositories.models import BookReview, User, BookInfo
-from utils.crud_utils import get_item
 from datetime import datetime as _datetime
+
+from fastapi import HTTPException, status
+from sqlalchemy import and_, select
+from sqlalchemy.exc import IntegrityError, NoResultFound
+from sqlalchemy.orm import Session, selectinload
+
+from domain.schemas.book_review_schemas import (
+    BookReviewByInfoId,
+    BookReviewCreateRequest,
+    BookReviewCreateResponse,
+    BookReviewItem,
+    BookReviewUpdateRequest,
+)
+from repositories.models import BookInfo, BookReview, User
+from utils.crud_utils import get_item
+
 
 async def get_all_reviews_by_bookinfo_id(book_info_id, db: Session):
     stmt = (
@@ -35,6 +43,21 @@ async def get_all_reviews_by_bookinfo_id(book_info_id, db: Session):
                 review_id=review.id,
                 user_id=review.user_id,
                 user_name=review.user.user_name,
+                review_content=review.review_content,
+                created_at=review.created_at,
+                updated_at=review.updated_at
+            )
+            for review in reviews
+        ]
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Unexpected error occurred during retrieve: {str(e)}"
+        )
+
+    return response
+
 
 
 async def get_all_user_reviews(user_id, db: Session):
@@ -98,7 +121,7 @@ async def create_review(request: BookReviewCreateRequest, db: Session):
     if not valid_book_info:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f"Invalid book info ID"
+            detail="Invalid book info ID"
         )
 
     review = BookReview(

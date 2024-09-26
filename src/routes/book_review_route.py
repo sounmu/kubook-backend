@@ -41,7 +41,7 @@ async def get_all_reviews_by_bookinfo_id(
 
     return result
 
- @router.get(
+@router.get(
     "/{user_id}/reviews",
     response_model=BookReviewListResponse,
     status_code=status.HTTP_200_OK,
