@@ -1,18 +1,25 @@
-from typing import List
-from datetime import date, datetime
+
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from sqlalchemy import DateTime, Date
-from domain.schemas.bookrequest_schemas import UpdateBookRequestRequest, ReqeustGetMyBookRequest, DeleteBookRequestRequest, BookRequestResponse
+
+from domain.schemas.bookrequest_schemas import (
+    BookRequestResponse,
+    DeleteBookRequestRequest,
+    ReqeustGetMyBookRequest,
+    UpdateBookRequestRequest,
+)
 from repositories.models import RequestedBook
-from utils.crud_utils import update_item, get_item, get_item_by_column
+from utils.crud_utils import get_item, get_item_by_column, update_item
 
 
 async def update_bookrequest(request_data: UpdateBookRequestRequest, db: Session):
     requested_book = get_item(RequestedBook, request_data.request_id, db)
 
     if not requested_book:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Requested book not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Requested book not found"
+            ) from None
 
     # 도서 구매 요청 table 수정
     updated_book = update_item(RequestedBook, request_data.request_id, request_data, db)
@@ -32,8 +39,8 @@ async def update_bookrequest(request_data: UpdateBookRequestRequest, db: Session
     return response
 
 
-async def read_bookrequest(request_data: ReqeustGetMyBookRequest, db: Session) -> List[BookRequestResponse]:
-    requested_book_list: List[RequestedBook] = get_item_by_column(
+async def read_bookrequest(request_data: ReqeustGetMyBookRequest, db: Session) -> list[BookRequestResponse]:
+    requested_book_list: list[RequestedBook] = get_item_by_column(
         model=RequestedBook,
         columns={'user_id': request_data.user_id},
         db=db
@@ -63,6 +70,6 @@ async def delete_bookrequest(request_data: DeleteBookRequestRequest, db: Session
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Requested book not found")
 
     # 도서 구매 요청 table 수정
-    updated_book = update_item(RequestedBook, request_data.request_id, request_data, db)
+    # updated_book = update_item(RequestedBook, request_data.request_id, request_data, db)
 
     return

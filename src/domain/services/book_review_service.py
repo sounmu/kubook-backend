@@ -27,7 +27,7 @@ async def get_all_reviews_by_bookinfo_id(book_info_id, db: Session):
                 BookReview.is_deleted == False
             )
         )
-        .order_by(BookReview.created_at)
+        .order_by(BookReview.updated_at)
     )
     try:
         reviews = db.execute(stmt).scalars().all()
@@ -54,14 +54,22 @@ async def get_all_reviews_by_bookinfo_id(book_info_id, db: Session):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Unexpected error occurred during retrieve: {str(e)}"
-        )
+            ) from e
 
     return response
 
 
 
 async def get_all_user_reviews(user_id, db: Session):
-    stmt = select(BookReview).where(and_(BookReview.user_id == user_id, BookReview.is_deleted == False)).order_by(BookReview.created_at)
+    stmt = (
+        select(BookReview)
+        .where(
+            and_(
+                BookReview.user_id == user_id,
+                BookReview.is_deleted == False
+            )
+        )
+        .order_by(BookReview.updated_at))
 
     try:
         reviews = db.scalars(stmt).all()  # loans를 리스트로 반환
@@ -82,8 +90,10 @@ async def get_all_user_reviews(user_id, db: Session):
         ]
 
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                            detail=f"Unexpected error occurred during retrieve: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Unexpected error occurred during retrieve: {str(e)}"
+            ) from e
     return result
 
 
@@ -103,12 +113,16 @@ async def delete_review(review_id, user_id, db: Session):
         db.flush()
 
     except NoResultFound:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail="Loan not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Loan not found"
+        ) from None
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                            detail=f"Unexpected error occurred during update: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Unexpected error occurred during update: {str(e)}"
+            ) from e
     else:
         db.commit()
         return
@@ -122,7 +136,7 @@ async def create_review(request: BookReviewCreateRequest, db: Session):
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="Invalid book info ID"
-        )
+            )
 
     review = BookReview(
         user_id=request.user_id,
@@ -141,7 +155,7 @@ async def create_review(request: BookReviewCreateRequest, db: Session):
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Unexpected error occurred: {str(e)}"
-        )
+            ) from e
     else:
         db.commit()
         db.refresh(review)
@@ -173,16 +187,22 @@ async def update_review(request: BookReviewUpdateRequest, db: Session):
 
         db.flush()
     except NoResultFound:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail="Review not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Review not found"
+            ) from None
     except IntegrityError as e:
         db.rollback()
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                            detail=f"Integrity Error occurred during update the Review item.: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Integrity Error occurred during update the Review item.: {str(e)}"
+            ) from None
     except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                            detail=f"Unexpected error occurred during update: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Unexpected error occurred during update: {str(e)}"
+            ) from e
     else:
         db.commit()
         db.refresh(review)

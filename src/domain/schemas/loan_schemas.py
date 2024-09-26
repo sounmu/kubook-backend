@@ -1,7 +1,5 @@
-from datetime import date
+from datetime import date, timedelta
 from datetime import datetime as _datetime
-from datetime import timedelta
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -17,7 +15,7 @@ class Loan(BaseModel):
     extend_status: bool = Field(title="extend_status", description="연장 상태", example=True)
     overdue_days: int = Field(title="overdue_days", description="연체 일자", example=1)
     return_status: bool = Field(title="return_status", description="반납 상태", example=False)
-    return_date: Optional[date] = Field(title="return_date", description="반납 날짜", example=None)
+    return_date: date | None = Field(title="return_date", description="반납 날짜", example=None)
 
 
 class LoanItem(BaseModel):
@@ -31,7 +29,7 @@ class LoanItem(BaseModel):
     extend_status: bool = Field(title="extend_status", description="연장 상태", example=True)
     overdue_days: int = Field(title="overdue_days", description="연체 일자", example=1)
     return_status: bool = Field(title="return_status", description="반납 상태", example=False)
-    return_date: Optional[date] = Field(title="return_date", description="반납 날짜", example=None)
+    return_date: date | None = Field(title="return_date", description="반납 날짜", example=None)
 
 
 class LoanExtendRequest(BaseModel):
@@ -74,4 +72,4 @@ class LoanResponse(BaseModel):
     extend_status: bool = Field(title="extend_status", description="연장 상태", example=True)
     overdue_days: int = Field(title="overdue_days", description="연체 일자", example=1)
     return_status: bool = Field(title="return_status", description="반납 상태", example=False)
-    return_date: Optional[date] = Field(title="return_date", description="반납 날짜", example=None)
+    return_date: date | None = Field(title="return_date", description="반납 날짜", example=None)
