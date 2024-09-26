@@ -2,9 +2,8 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from dependencies import get_current_active_user, get_db
-from domain.schemas.loan_schemas import LoanCreateRequest, LoanExtendRequest, LoanItem
-from domain.services.loan_service import create_loan as service_create_loan
-from domain.services.loan_service import extend_loan as service_extend_loan
+from domain.schemas.loan_schemas import DomainReqPostLoan, DomainReqPutLoan, DomianResGetLoanItem
+from domain.services.loan_service import service_create_loan, service_extend_loan
 from routes.response.loan_response import LoanCreateResponse
 
 router = APIRouter(
@@ -25,7 +24,7 @@ async def create_loan(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_active_user)
 ):
-    domain_req = LoanCreateRequest(
+    domain_req = DomainReqPostLoan(
         user_id=current_user.id,
         book_id=book_id
     )
@@ -35,7 +34,7 @@ async def create_loan(
 
 @router.put(
     "/{loan_id}/extend",
-    response_model=LoanItem,
+    response_model=DomianResGetLoanItem,
     status_code=status.HTTP_200_OK,
     summary="대출 연장",
 )
@@ -44,7 +43,7 @@ async def extend_loan(
     db: Session = Depends(get_db),
     current_user=Depends(get_current_active_user)
 ):
-    domain_req = LoanExtendRequest(
+    domain_req = DomainReqPutLoan(
         loan_id=loan_id,
         user_id=current_user.id
     )

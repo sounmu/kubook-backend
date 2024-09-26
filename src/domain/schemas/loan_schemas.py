@@ -18,7 +18,7 @@ class Loan(BaseModel):
     return_date: date | None = Field(title="return_date", description="반납 날짜", example=None)
 
 
-class LoanItem(BaseModel):
+class DomianResGetLoanItem(BaseModel):
     loan_id: int = Field(title="loan_id", description="대출 정보 id", example=1, gt=0)
     book_id: int = Field(title="book_id", description="대출한 책 ID", example=1, gt=0)
     user_id: int = Field(title="user_id", description="대출한 사용자 ID", example=1, gt=0)
@@ -32,9 +32,9 @@ class LoanItem(BaseModel):
     return_date: date | None = Field(title="return_date", description="반납 날짜", example=None)
 
 
-class LoanExtendRequest(BaseModel):
+class DomainReqPutLoan(BaseModel):
     """
-    LoanExtendRequest 모델은 대출 연장 요청 시 필요한 정보를 담고 있습니다.
+    DomainReqPutLoan 모델은 대출 연장 요청 시 필요한 정보를 담고 있습니다.
 
     Attributes:
         loan_id (int): 대출 정보 id. 1 이상이어야 합니다.
@@ -44,9 +44,9 @@ class LoanExtendRequest(BaseModel):
     user_id: int = Field(title="user_id", description="대출한 사용자 ID", example=1, gt=0)
 
 
-class LoanCreateRequest(BaseModel):
+class DomainReqPostLoan(BaseModel):
     """
-    LoanCreateRequest 모델은 대출 연장 요청 시 필요한 정보를 담고 있습니다.
+    DomainReqPostLoan 모델은 대출 연장 요청 시 필요한 정보를 담고 있습니다.
 
     Attributes:
         user_id (int): 대출한 사용자 ID. 1 이상이어야 합니다.
@@ -63,7 +63,7 @@ class LoanCreate(BaseModel):
     updated_at: _datetime = Field(title="update_at", description="수정일시", example=_datetime.now())
 
 
-class LoanResponse(BaseModel):
+class DomainResGetLoan(BaseModel):
     loan_id: int = Field(title="loan_id", description="대출 정보 id", example=1, gt=0)
     book_id: int = Field(title="book_id", description="대출한 책 ID", example=1, gt=0)
     user_id: int = Field(title="user_id", description="대출한 사용자 ID", example=1, gt=0)

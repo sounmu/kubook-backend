@@ -3,14 +3,14 @@ from datetime import timedelta
 
 from fastapi import HTTPException, status
 from sqlalchemy import and_, select
-from sqlalchemy.exc import IntegrityError, NoResultFound
 from sqlalchemy.orm import Session
 
-from domain.schemas.loan_schemas import LoanCreateRequest, LoanExtendRequest, LoanItem, LoanResponse
+from domain.schemas.loan_schemas import DomainReqPostLoan, DomainReqPutLoan, DomainResGetLoan, DomianResGetLoanItem
 from repositories.models import Book, Loan
+from utils.crud_utils import get_item, update_item
 
 
-async def get_all_user_loans(user_id, db: Session):
+async def service_read_loans_by_user_id(user_id, db: Session):
     stmt = (
         select(Loan)
         .where(
@@ -29,7 +29,7 @@ async def get_all_user_loans(user_id, db: Session):
                 detail="Loans not found"
                 ) from None
         result = [
-            LoanResponse(
+            DomainResGetLoan(
                 loan_id=loan.id,
                 user_id=loan.user_id,
                 book_id=loan.book_id,
@@ -50,82 +50,56 @@ async def get_all_user_loans(user_id, db: Session):
     return result
 
 
-async def extend_loan(request: LoanExtendRequest, db: Session):
-    stmt = (
-        select(Loan)
-        .where(
-            and_(
-                Loan.id == request.loan_id,
-                Loan.is_deleted == False
+async def service_extend_loan(request: DomainReqPutLoan, db: Session):
+    loan = get_item(Loan, request.loan_id, db)
+
+    if loan.user_id != request.user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to access this loan."
             )
-        )
+    # 이미 반납된 도서인지 확인
+    if loan.return_status:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+           detail="This loan has already been returned."
+            )
+    # 이미 연장된 도서인지 확인
+    if loan.extend_status:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="This loan has already been extended."
+            )
+
+    updated_loan = update_item(
+        Loan,
+        request.loan_id,
+        {
+            "due_date": loan.due_date + timedelta(days=7),
+            "extend_status": True,
+            "updated_at": _datetime.now(),
+        },
+        db,
     )
 
-    try:
-        loan = db.execute(stmt).scalar_one()
+    result = DomianResGetLoanItem(
+        loan_id=updated_loan.id,
+        book_id=updated_loan.book_id,
+        user_id=updated_loan.user_id,
+        created_at=updated_loan.created_at,
+        updated_at=updated_loan.updated_at,
+        loan_date=updated_loan.loan_date,
+        due_date=updated_loan.due_date,
+        extend_status=updated_loan.extend_status,
+        overdue_days=updated_loan.overdue_days,
+        return_status=updated_loan.return_status,
+        return_date=updated_loan.return_date
+    )
 
-        if loan.user_id != request.user_id:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="You do not have permission to access this loan."
-                )
-        # 이미 반납된 도서인지 확인
-        if loan.return_status:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="This loan has already been returned."
-                )
-        # 이미 연장된 도서인지 확인
-        if loan.extend_status:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="This loan has already been extended."
-                )
-
-        loan.due_date = loan.due_date + timedelta(days=7)
-        loan.extend_status = True
-        loan.updated_at = _datetime.now()
-
-        db.flush()
-    except NoResultFound:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Loan not found"
-            ) from None
-    except IntegrityError as e:
-        db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f"Integrity Error occurred during update the new Loan item.: {str(e)}"
-            ) from e
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Unexpected error occurred during update: {str(e)}"
-            ) from e
-    else:
-        db.commit()
-        db.refresh(loan)
-
-        result = LoanItem(
-            loan_id=loan.id,
-            book_id=loan.book_id,
-            user_id=loan.user_id,
-            created_at=loan.created_at,
-            updated_at=loan.updated_at,
-            loan_date=loan.loan_date,
-            due_date=loan.due_date,
-            extend_status=loan.extend_status,
-            overdue_days=loan.overdue_days,
-            return_status=loan.return_status,
-            return_date=loan.return_date
-        )
-
-        return result
+    return result
 
 
-async def create_loan(request: LoanCreateRequest, db: Session):
+async def service_create_loan(request: DomainReqPostLoan, db: Session):
     stmt = (
         select(Book)
         .where(
@@ -163,7 +137,7 @@ async def create_loan(request: LoanCreateRequest, db: Session):
         db.commit()
         db.refresh(loan)
 
-        result = LoanItem(
+        result = DomianResGetLoanItem(
             loan_id=loan.id,
             book_id=loan.book_id,
             user_id=loan.user_id,
