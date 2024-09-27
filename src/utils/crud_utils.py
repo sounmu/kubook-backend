@@ -80,8 +80,7 @@ def update_item(model, index: int, req_data, db: Session):
                 else:
                     raise HTTPException(
                         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                        detail=f"Invalid value type for column {key}. Expected {
-                            type(current_item[key])}, got {type(value)}."
+                        detail=f"Invalid value type for column {key}. Expected {type(current_item[key])}, got {type(value)}."
                     )
         db.add(item)
         db.flush()
