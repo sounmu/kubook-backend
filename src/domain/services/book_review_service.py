@@ -145,8 +145,9 @@ async def service_update_review(request: DomainReqPutReview, db: Session):
                                 detail="You do not have permission to access this review.")
 
     review.review_content = request.review_content
+    dict = {"review_content": review.review_content}
 
-    updated_review = update_item(BookReview, request.review_id, {"review_content": review.review_content}, db)
+    updated_review = update_item(BookReview, request.review_id, dict, db)
 
 
     response = DomainResGetReviewItem(

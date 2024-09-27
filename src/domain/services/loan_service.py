@@ -71,16 +71,9 @@ async def service_extend_loan(request: DomainReqPutLoan, db: Session):
             detail="This loan has already been extended."
             )
 
-    updated_loan = update_item(
-        Loan,
-        request.loan_id,
-        {
-            "due_date": loan.due_date + timedelta(days=7),
-            "extend_status": True,
-            "updated_at": _datetime.now(),
-        },
-        db,
-    )
+    dict = {"due_date": loan.due_date + timedelta(days=7), "extend_status": True, "updated_at": _datetime.now()}
+
+    updated_loan = update_item(Loan, request.loan_id, dict, db)
 
     result = DomianResGetLoanItem(
         loan_id=updated_loan.id,
