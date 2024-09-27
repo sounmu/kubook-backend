@@ -3,10 +3,10 @@ from datetime import datetime as _datetime
 
 from pydantic import BaseModel, Field
 
-from domain.schemas.loan_schemas import LoanResponse
+from domain.schemas.loan_schemas import DomainResGetLoan
 
 
-class LoanListResponse(BaseModel):
+class RouteResGetLoanList(BaseModel):
     """
     LoanListResponse 모델은 대출 항목들의 목록과 해당 목록에 포함된 항목 개수를 반환하는 응답 구조입니다.
 
@@ -14,11 +14,11 @@ class LoanListResponse(BaseModel):
         data (List[LoanResponse]): 대출 항목의 목록을 담고 있는 배열입니다.
         count (int): data 배열의 요소 개수를 나타냅니다.
     """
-    data: list[LoanResponse]
+    data: list[DomainResGetLoan]
     count: int = Field(description="data 배열의 요소 개수")
 
 
-class LoanCreateResponse(BaseModel):
+class RouteResPostLoan(BaseModel):
     loan_id: int = Field(title="loan_id", description="대출 정보 id", example=1, gt=0)
     book_id: int = Field(title="book_id", description="대출한 책 ID", example=1, gt=0)
     user_id: int = Field(title="user_id", description="대출한 사용자 ID", example=1, gt=0)

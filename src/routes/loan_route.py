@@ -4,7 +4,8 @@ from sqlalchemy.orm import Session
 from dependencies import get_current_active_user, get_db
 from domain.schemas.loan_schemas import DomainReqPostLoan, DomainReqPutLoan, DomianResGetLoanItem
 from domain.services.loan_service import service_create_loan, service_extend_loan
-from routes.response.loan_response import LoanCreateResponse
+from routes.request.loan_request import RouteReqPostLoan
+from routes.response.loan_response import RouteResPostLoan
 
 router = APIRouter(
     prefix="/loans",
@@ -15,18 +16,18 @@ router = APIRouter(
 
 @router.post(
     "",
-    response_model=LoanCreateResponse,
+    response_model=RouteResPostLoan,
     status_code=status.HTTP_200_OK,
     summary="대출 신청"
 )
 async def create_loan(
-    book_id: int,
+    route_req: RouteReqPostLoan,
     db: Session = Depends(get_db),
     current_user=Depends(get_current_active_user)
 ):
     domain_req = DomainReqPostLoan(
         user_id=current_user.id,
-        book_id=book_id
+        book_id=route_req.book_id
     )
     result = await service_create_loan(domain_req, db)
     return result

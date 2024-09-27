@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from dependencies import get_current_active_user, get_db
 from domain.services.loan_service import service_read_loans_by_user_id
-from routes.response.loan_response import LoanListResponse
+from routes.response.loan_response import RouteResGetLoanList
 
 router = APIRouter(
     prefix="/users",
@@ -14,7 +14,7 @@ router = APIRouter(
 
 @router.get(
     "/{user_id}/loans",
-    response_model=LoanListResponse,
+    response_model=RouteResGetLoanList,
     status_code=status.HTTP_200_OK,
     summary="회원의 전체 대출 목록 조회",
 )
@@ -24,7 +24,7 @@ async def get_all_user_loans(
 ):
     result = await service_read_loans_by_user_id(current_user.id, db)
 
-    response = LoanListResponse(
+    response = RouteResGetLoanList(
         data=result,
         count=len(result)
     )
