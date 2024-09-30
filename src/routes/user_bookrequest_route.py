@@ -27,7 +27,7 @@ async def get_user_bookrequests(
 ):
     domain_req = DomainReqGetBookRequest(user_id=user_id)
     domain_res = await service_read_bookrequest(domain_req, db)
-    converted_res = [RouteReqPutBookRequest(
+    converted_res = [RouteResBookRequest(
         user_id=item.user_id,
         request_id=item.request_id,
         book_title=item.book_title,
