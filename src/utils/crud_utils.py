@@ -37,64 +37,64 @@ def get_item(model, index: int, db: Session):
 
 
 # # CREATE
-# def create_item(model, req_data, db: Session):
-#     item = model(**req_data.dict())
+def create_item(model, req_data, db: Session):
+    item = model(**req_data.dict())
 
-#     try:
-#         db.add(item)
-#         db.flush()
+    try:
+        db.add(item)
+        db.flush()
 
-#     except IntegrityError as e:
-#         db.rollback()
-#         raise HTTPException(
-#             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-#             detail=f"Integrity Error occurred during create the new {model.__name__} item. {str(e)}") from e
-#     except Exception as e:
-#         db.rollback()
-#         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-#                             detail=f"Unexpected error occurred: {str(e)}") from e
-#     else:
-#         db.commit()
-#         db.refresh(item)
-#         return item
+    except IntegrityError as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Integrity Error occurred during create the new {model.__name__} item. {str(e)}") from e
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail=f"Unexpected error occurred: {str(e)}") from e
+    else:
+        db.commit()
+        db.refresh(item)
+        return item
 
 # # update
 
 
-# def update_item(model, index: int, req_data, db: Session):
-#     item = get_item(model, index, db)
+def update_item(model, index: int, req_data, db: Session):
+    item = get_item(model, index, db)
 
-#     try:
-#         current_item = item.__dict__
-#         if type(req_data) is not dict:
-#             new_item = req_data.dict()
-#         else:
-#             new_item = req_data
+    try:
+        current_item = item.__dict__
+        if type(req_data) is not dict:
+            new_item = req_data.dict()
+        else:
+            new_item = req_data
 
-#         for key, value in new_item.items():
-#             if value is not None and key in current_item:
-#                 if isinstance(value, type(current_item[key])):
-#                     setattr(item, key, value)
-#                 else:
-#                     raise HTTPException(
-#                         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-#                         detail=f"Invalid value type for column {key}. Expected {type(current_item[key])}, got {type(value)}."
-#                     )
-#         db.add(item)
-#         db.flush()
+        for key, value in new_item.items():
+            if value is not None and key in current_item:
+                if isinstance(value, type(current_item[key])):
+                    setattr(item, key, value)
+                else:
+                    raise HTTPException(
+                        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                        detail=f"Invalid value type for column {key}. Expected {type(current_item[key])}, got {type(value)}."
+                    )
+        db.add(item)
+        db.flush()
 
-#     except IntegrityError as e:
-#         db.rollback()
-#         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-#                             detail=f"Integrity Error occurred during update the new {model.__name__} item.: {str(e)}") from e
-#     except Exception as e:
-#         db.rollback()
-#         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-#                             detail=f"Unexpected error occurred during update: {str(e)}") from e
-#     else:
-#         db.commit()
-#         db.refresh(item)
-#         return item
+    except IntegrityError as e:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                            detail=f"Integrity Error occurred during update the new {model.__name__} item.: {str(e)}") from e
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail=f"Unexpected error occurred during update: {str(e)}") from e
+    else:
+        db.commit()
+        db.refresh(item)
+        return item
 
 
 # delete

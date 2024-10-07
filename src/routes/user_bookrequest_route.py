@@ -2,20 +2,22 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from dependencies import get_current_active_user, get_db
-from domain.schemas.bookrequest_schemas import DomainReqGetBookRequest, DomainReqPutBookRequest
-from domain.services.bookrequest_service import service_read_bookrequest, service_update_bookrequest
+from domain.schemas.bookrequest_schemas import DomainReqDelBookRequest, DomainReqGetBookRequest, DomainReqPutBookRequest
+from domain.services.bookrequest_service import (
+    service_delete_bookrequest,
+    service_read_bookrequest,
+    service_update_bookrequest,
+)
 from routes.request.update_bookrequest_request import RouteReqPutBookRequest
 from routes.response.bookrequest_response import RouteResBookRequest, RouteResBookRequestList
 
 router = APIRouter(
-    prefix="/users",
-    tags=["users"],
     dependencies=[Depends(get_current_active_user)]
 )
 
-
 @router.get(
-    "/{user_id}/book-requests",
+    "/users/{user_id}/book-requests",
+    tags=["users"],
     summary="도서 구매 요청 목록 조회",
     response_model=RouteResBookRequestList,
     status_code=status.HTTP_200_OK
@@ -44,7 +46,8 @@ async def get_user_bookrequests(
 
 
 @router.put(
-    "/{user_id}/book-requests/{request_id}",
+    "/users/{user_id}/book-requests/{request_id}",
+    tags=["users"],
     summary="도서 구매 요청 수정",
     response_model=RouteResBookRequest,
     status_code=status.HTTP_200_OK
@@ -78,3 +81,19 @@ async def update_user_bookrequest(
         reject_reason=domain_res.reject_reason
     )
     return result
+
+@router.delete(
+    "/book-requests/{request_id}",
+    tags=["book-requests"],
+    summary="도서 구매 요청 삭제 (요청자 취소)",
+    status_code=status.HTTP_204_NO_CONTENT
+)
+async def delete_user_bookrequest (
+    request_id: int,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_active_user)
+) -> None:
+    domain_req = DomainReqDelBookRequest(request_id=request_id, processing_status=2)
+    await service_delete_bookrequest(domain_req, db)
+
+    return
