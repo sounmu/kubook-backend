@@ -4,13 +4,11 @@ from fastapi import HTTPException, status
 from sqlalchemy import and_, select
 from sqlalchemy.orm import Session, selectinload
 
-from domain.schemas.book_review_schemas import (
-    DomainReqPostReview,
-    DomainReqPutReview,
-    DomainResGetReviewByInfoId,
-    DomainResGetReviewItem,
-    DomainResPostReview,
-)
+from domain.schemas.book_review_schemas import (DomainReqPostReview,
+                                                DomainReqPutReview,
+                                                DomainResGetReviewByInfoId,
+                                                DomainResGetReviewItem,
+                                                DomainResPostReview)
 from repositories.models import BookReview, User
 from utils.crud_utils import create_item, delete_item, get_item, update_item
 
