@@ -15,7 +15,7 @@ from utils.crud_utils import get_item
 
 async def service_update_bookrequest(request_data: DomainReqPutBookRequest, db: Session):
     requested_book = get_item(RequestedBook, request_data.request_id, db)
-    if( requested_book.request.user_id != request_data.user_id):
+    if( requested_book.user_id != request_data.user_id):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Deny permission to update this book request")
 
     request_book = requested_book.__dict__
