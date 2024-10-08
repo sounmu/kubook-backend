@@ -9,8 +9,10 @@ class DomainReqGetBookRequest(BaseModel):
 
 
 class DomainReqDelBookRequest(BaseModel):
+    user_id: int = Field(title="user_id", description="도서 구매를 요청한 사용자 ID", example=1, gt=0)
     request_id: int = Field(title="book_request_id", description="도서 구매 요청 정보 id", example=1, gt=0)
     processing_status: int = Field(0, title="processing_status", description="처리 상태", example=0, ge=0, le=3)
+    is_deleted: bool = Field("is_delted", description="삭제 여부")
 
 
 class DomainReqPutBookRequest(BaseModel):
