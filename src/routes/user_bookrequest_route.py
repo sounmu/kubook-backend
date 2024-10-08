@@ -93,7 +93,7 @@ async def delete_user_bookrequest (
     db: Session = Depends(get_db),
     current_user=Depends(get_current_active_user)
 ) -> None:
-    domain_req = DomainReqDelBookRequest(request_id=request_id, processing_status=2)
+    domain_req = DomainReqDelBookRequest(user_id=current_user.id, request_id=request_id, processing_status=2, is_deleted=1)
     await service_delete_bookrequest(domain_req, db)
 
     return
