@@ -10,61 +10,54 @@ from domain.schemas.bookrequest_schemas import (
     DomainResBookRequest,
 )
 from repositories.models import RequestedBook
-from utils.crud_utils import delete_item
+from utils.crud_utils import get_item
 
 
 async def service_update_bookrequest(request_data: DomainReqPutBookRequest, db: Session):
-    stmt = (select(RequestedBook).where(
-            and_(RequestedBook.id==request_data.request_id,
-                 RequestedBook.user_id==request_data.user_id,
-                 RequestedBook.is_deleted==False))
-            .order_by(RequestedBook.updated_at))
+    requested_book = get_item(RequestedBook, request_data.request_id, db)
+    if( requested_book.request.user_id != request_data.user_id):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Deny permission to update this book request")
+
+    request_book = requested_book.__dict__
+    updated_book = request_data.__dict__
     try:
-        item = db.execute(stmt).scalar_one()
-        if not item:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Requested book not found")
-        request_book = item.__dict__
-        updated_book = request_data.__dict__
         for key, value in updated_book.items():
             if value is not None and key in request_book:
                 if isinstance(value, type(request_book[key])):
-                    setattr(item, key, value)
+                 setattr(requested_book, key, value)
                 else:
                     raise HTTPException(
                         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                         detail=f"Invalid value type for column {key}. Expected {type(request_book[key])}, got {type(value)}."
                     )
-        db.add(item)
+        db.add(requested_book)
         db.flush()
-    except HTTPException as e:
-        db.rollback()
-        raise e
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail=f"Unexpected error occurred during update: {str(e)}") from e
     else:
         db.commit()
-        db.refresh(item)
+        db.refresh(requested_book)
         # domain response schema 생성
         response = DomainResBookRequest(
-        user_id=item.user_id,
-        request_id=item.id,
-        book_title=item.book_title,
-        publication_year=item.publication_year,
-        request_link=item.request_link,
-        reason=item.reason,
-            processing_status=item.processing_status,
-            request_date=item.requested_at.date(),
-            reject_reason=item.reject_reason
+            user_id=requested_book.user_id,
+            request_id=requested_book.id,
+            book_title=requested_book.book_title,
+            publication_year=requested_book.publication_year,
+            request_link=requested_book.request_link,
+            reason=requested_book.reason,
+            processing_status=requested_book.processing_status,
+            request_date=requested_book.requested_at.date(),
+            reject_reason=requested_book.reject_reason
         )
         return response
 
 
 
 async def service_read_bookrequest(request_data: DomainReqGetBookRequest, db: Session) -> list[DomainResBookRequest]:
-    stmt = (select(RequestedBook).where(and_(RequestedBook.user_id==request_data.user_id, RequestedBook.is_deleted==False))
+    stmt = (select(RequestedBook).where(
+            and_(RequestedBook.user_id==request_data.user_id, RequestedBook.is_deleted==False))
             .order_by(RequestedBook.updated_at))
     try:
         requested_book_list = db.scalars(stmt).all()
@@ -90,5 +83,28 @@ async def service_read_bookrequest(request_data: DomainReqGetBookRequest, db: Se
     return response
 
 async def service_delete_bookrequest(request_data: DomainReqDelBookRequest, db: Session):
-    delete_item(RequestedBook, request_data.request_id, db)
-    return
+    requested_book = get_item(RequestedBook, request_data.request_id, db)
+    if( requested_book.user_id != request_data.user_id):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Deny permission to update this book request")
+    request_book = requested_book.__dict__
+    updated_book = request_data.__dict__
+    try:
+        for key, value in updated_book.items():
+            if value is not None and key in request_book:
+                if isinstance(value, type(request_book[key])):
+                 setattr(requested_book, key, value)
+                else:
+                    raise HTTPException(
+                        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                        detail=f"Invalid value type for column {key}. Expected {type(request_book[key])}, got {type(value)}."
+                    )
+        db.add(requested_book)
+        db.flush()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            detail=f"Unexpected error occurred during update: {str(e)}") from e
+    else:
+        db.commit()
+        db.refresh(requested_book)
+        return
