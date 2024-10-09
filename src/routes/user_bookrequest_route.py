@@ -8,7 +8,7 @@ from domain.services.bookrequest_service import (
     service_read_bookrequest,
     service_update_bookrequest,
 )
-from routes.request.user_bookrequest_request import RouteReqPutBookRequest
+from routes.request.bookrequest_request import RouteReqPutBookRequest
 from routes.response.bookrequest_response import RouteResBookRequest, RouteResBookRequestList
 
 router = APIRouter(dependencies=[Depends(get_current_active_user)])
