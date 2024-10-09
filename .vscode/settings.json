@@ -6,7 +6,7 @@
     "editor.defaultFormatter": "charliermarsh.ruff",
     "editor.formatOnType": true,
     "editor.codeActionsOnSave": {
-      "source.organizeImports": "explicit",
+      "source.organizeImports": "never",
       "source.fixAll.ruff": "never" 
     }
   },
