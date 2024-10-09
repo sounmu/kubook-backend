@@ -2,7 +2,6 @@ from datetime import datetime as _datetime
 
 from fastapi import HTTPException, status
 from sqlalchemy import select
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from domain.schemas.bookrequest_schemas import DomainReqPostBookRequest, DomainResPostBookRequest
