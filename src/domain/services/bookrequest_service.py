@@ -86,18 +86,9 @@ async def service_delete_bookrequest(request_data: DomainReqDelBookRequest, db: 
     requested_book = get_item(RequestedBook, request_data.request_id, db)
     if( requested_book.user_id != request_data.user_id):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Deny permission to update this book request")
-    request_book = requested_book.__dict__
-    updated_book = request_data.__dict__
     try:
-        for key, value in updated_book.items():
-            if value is not None and key in request_book:
-                if isinstance(value, type(request_book[key])):
-                 setattr(requested_book, key, value)
-                else:
-                    raise HTTPException(
-                        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                        detail=f"Invalid value type for column {key}. Expected {type(request_book[key])}, got {type(value)}."
-                    )
+        requested_book.processing_status = 2
+        requested_book.is_deleted = True
         db.add(requested_book)
         db.flush()
     except Exception as e:
