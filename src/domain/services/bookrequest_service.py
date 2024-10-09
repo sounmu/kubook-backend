@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from domain.schemas.bookrequest_schemas import DomainReqPostBookRequest, DomainResPostBookRequest
-from repositories.models import RequestedBook
+from repositories.models import RequestedBook, User
 
 
 async def service_create_bookrequest(request: DomainReqPostBookRequest, db: Session):
@@ -17,6 +17,16 @@ async def service_create_bookrequest(request: DomainReqPostBookRequest, db: Sess
     if valid_request:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail="Already requested book")
+
+    # check if the user exists in database
+    stmt = select(User).where(User.id == request.user_id)
+    valid_user_id = db.execute(stmt).scalar_one_or_none()
+
+    if not valid_user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"Invalid user ID"
+        )
 
     purchase_request = RequestedBook(
         user_id=request.user_id,
@@ -31,10 +41,6 @@ async def service_create_bookrequest(request: DomainReqPostBookRequest, db: Sess
     try:
         db.add(purchase_request)
         db.flush()
-    except IntegrityError as e:
-        db.rollback()
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                            detail=f"Integrity Error occurred during create the new {purchase_request} item. {str(e)}")
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
