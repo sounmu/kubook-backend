@@ -50,7 +50,10 @@ async def get_book_by_book_id(
     response_model=RouteResGetBookList,
     status_code=status.HTTP_200_OK
 )
-async def search_books(searching_keyword: str = Query(alias="search"), db: Session = Depends(get_db)):
+async def search_books(
+    searching_keyword: str = Query(alias="search"),
+    db: Session = Depends(get_db)
+):
     domain_res = await service_search_books(searching_keyword, db)
     result = RouteResGetBookList(data=domain_res, count=len(domain_res))
 
