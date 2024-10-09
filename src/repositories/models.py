@@ -54,11 +54,12 @@ class RequestedBook(Base):
     reject_reason = Column(String(20))
     request_link = Column(String(255), nullable=False)
     reason = Column(Text, nullable=False)
-    requested_at = Column(DateTime, nullable=False)
+    request_date = Column(Date, nullable=False)
     processing_status = Column(Integer, nullable=False, default=0)
-    processed_at = Column(DateTime)
+    processed_date = Column(Date)
     created_at = Column(TIMESTAMP, nullable=False, default=func.current_timestamp())
     updated_at = Column(TIMESTAMP, nullable=False, default=func.current_timestamp(), onupdate=func.current_timestamp())
+
     is_deleted = Column(Boolean, nullable=False, default=False)
 
     # Relationship
