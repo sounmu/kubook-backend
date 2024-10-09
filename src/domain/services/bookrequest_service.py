@@ -1,4 +1,4 @@
-from datetime import datetime as _datetime
+from datetime import date
 
 from fastapi import HTTPException, status
 from sqlalchemy import select
@@ -32,7 +32,7 @@ async def service_create_bookrequest(request: DomainReqPostBookRequest, db: Sess
         book_title=request.book_title,
         publication_year=request.publication_year,
         request_link=request.request_link,
-        requested_at=_datetime.now(),
+        request_date=date.today(),
         reason=request.reason,
         processing_status=0
     )
@@ -54,7 +54,7 @@ async def service_create_bookrequest(request: DomainReqPostBookRequest, db: Sess
             book_title=purchase_request.book_title,
             publication_year=purchase_request.publication_year,
             request_link=purchase_request.request_link,
-            requested_at=purchase_request.requested_at,
+            request_date=purchase_request.request_date,
             reason=purchase_request.reason,
             processing_status=purchase_request.processing_status
         )
