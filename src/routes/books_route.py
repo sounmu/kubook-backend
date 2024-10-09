@@ -6,7 +6,10 @@ from domain.schemas.book_schemas import DomainReqGetBook
 from domain.services.book_service import service_read_book, service_search_books
 from routes.response.book_response import RouteResGetBook, RouteResGetBookList
 
-router = APIRouter(prefix="/books", tags=["books"])
+router = APIRouter(
+    prefix="/books",
+    tags=["books"]
+)
 
 
 @router.get(
