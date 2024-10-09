@@ -16,9 +16,9 @@ CREATE TABLE `requested_book` (
           `reject_reason` VARCHAR(20) NULL,
           `request_link` VARCHAR(255) NOT NULL,
           `reason` TEXT NOT NULL,
-          `requested_at` DATETIME NOT NULL,
+          `request_date` DATE NOT NULL,
           `processing_status` TINYINT NOT NULL DEFAULT 0,
-          `processed_at` DATETIME NULL,
+          `processed_date` DATE NULL,
           `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
           `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
           `is_deleted` BOOLEAN NOT NULL DEFAULT FALSE
