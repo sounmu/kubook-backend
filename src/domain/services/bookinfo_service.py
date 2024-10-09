@@ -1,20 +1,19 @@
-from typing import List
-from datetime import date, datetime
+
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from sqlalchemy import DateTime, Date
-from domain.schemas.bookinfo_schemas import ReqeustGetBookInfo, BookInfoResponse
+
+from domain.schemas.bookinfo_schemas import DomainReqGetBookInfo, DomainResBookInfo
 from repositories.models import BookInfo
 from utils.crud_utils import get_item
 
 
-async def read_bookinfo(request_data: ReqeustGetBookInfo, db: Session):
+async def service_read_bookinfo(request_data: DomainReqGetBookInfo, db: Session):
     requested_book = get_item(BookInfo, request_data.bookinfo_id, db)
 
     if not requested_book:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Requested book not found")
 
-    response = BookInfoResponse(
+    response = DomainResBookInfo(
         bookinfo_id=requested_book.id,
         book_title=requested_book.book_title,
         code=requested_book.code,
