@@ -5,7 +5,7 @@
     "editor.defaultFormatter": null,
     "editor.formatOnType": true,
     "editor.codeActionsOnSave": {
-      "source.organizeImports": "explicit",
+      "source.organizeImports": "never",
       "source.fixAll.ruff": "never" 
     }
   },

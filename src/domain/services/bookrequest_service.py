@@ -7,10 +7,10 @@ from sqlalchemy.orm import Session
 from domain.schemas.bookrequest_schemas import (
     DomainReqDelBookRequest,
     DomainReqGetBookRequest,
+    DomainReqPostBookRequest,
     DomainReqPutBookRequest,
     DomainResBookRequest,
-    DomainReqPostBookRequest, 
-    DomainResPostBookRequest
+    DomainResPostBookRequest,
 )
 from repositories.models import RequestedBook, User
 from utils.crud_utils import get_item
@@ -32,7 +32,7 @@ async def service_create_bookrequest(request: DomainReqPostBookRequest, db: Sess
     if not valid_user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail=f"Invalid user ID"
+            detail="Invalid user ID"
         )
 
     purchase_request = RequestedBook(
@@ -51,7 +51,7 @@ async def service_create_bookrequest(request: DomainReqPostBookRequest, db: Sess
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                            detail=f"Unexpected error occurred: {str(e)}")
+                            detail=f"Unexpected error occurred: {str(e)}") from e
     else:
         db.commit()
         db.refresh(purchase_request)
@@ -85,7 +85,8 @@ async def service_update_bookrequest(request_data: DomainReqPutBookRequest, db: 
                 else:
                     raise HTTPException(
                         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                        detail=f"Invalid value type for column {key}. Expected {type(request_book[key])}, got {type(value)}."
+                        detail=f"Invalid value type for column {key}. \
+                        Expected {type(request_book[key])}, got {type(value)}."
                     )
         db.add(requested_book)
         db.flush()
